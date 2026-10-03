@@ -1,0 +1,190 @@
+import React, { useState, useEffect } from 'react';
+import { Compass, Heart, MessageCircle, Layers, RefreshCw, X } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import PostDetailModal from '../components/PostDetailModal';
+import RightSidebar from '../components/RightSidebar';
+import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
+import './Explore.css';
+
+const Explore = () => {
+  const { user, isAuthenticated } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const searchParams = new URLSearchParams(location.search);
+  const activeTag = searchParams.get('tag') || '';
+
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [activeModalPost, setActiveModalPost] = useState(null);
+  const [suggestedUsers, setSuggestedUsers] = useState([]);
+
+  useEffect(() => {
+    fetchExplorePosts(1);
+    fetchSuggested();
+  }, [isAuthenticated, activeTag]);
+
+  const fetchExplorePosts = async (pageNum = 1) => {
+    if (pageNum === 1) setLoading(true);
+    else setLoadingMore(true);
+
+    try {
+      const tagParam = activeTag ? `&tag=${encodeURIComponent(activeTag)}` : '';
+      const res = await api.get(`/posts/discover?page=${pageNum}&limit=18${tagParam}`);
+      if (res.data.success) {
+        if (pageNum === 1) {
+          setPosts(res.data.data);
+        } else {
+          setPosts((prev) => [...prev, ...res.data.data]);
+        }
+        setHasMore(res.data.pagination?.hasMore || false);
+        setPage(pageNum);
+      }
+    } catch (err) {
+      console.error('Explore error:', err);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  const fetchSuggested = async () => {
+    try {
+      const res = await api.get('/users/suggested');
+      if (res.data.success) setSuggestedUsers(res.data.data);
+    } catch (err) {
+      console.error('Suggested users error:', err);
+    }
+  };
+
+  const handleFollowToggle = async (userId) => {
+    try {
+      await api.post(`/users/${userId}/follow`);
+      setSuggestedUsers((prev) => prev.filter((u) => u._id !== userId));
+    } catch (err) {
+      console.error('Follow error:', err);
+    }
+  };
+
+  return (
+    <>
+      <div className="app-center-col">
+        <div className="explore-center">
+        <div className="explore-header">
+          <div className="explore-badge">
+            <Compass size={18} />
+            <span>Explore Community</span>
+          </div>
+          <h2>Discover Fresh Moments</h2>
+          <p>Explore creative photography, designs, and lifestyle stories shared across Vibely</p>
+          {activeTag && (
+            <div className="explore-tag-chip">
+              <span>#{activeTag}</span>
+              <button
+                className="explore-tag-chip-clear"
+                onClick={() => navigate('/explore')}
+                aria-label="Clear tag filter"
+              >
+                <X size={13} />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {loading ? (
+          <div className="explore-grid">
+            {Array.from({ length: 9 }).map((_, i) => (
+              <div key={i} className="explore-grid-item skeleton" />
+            ))}
+          </div>
+        ) : posts.length > 0 ? (
+          <>
+            <div className="explore-grid">
+              {posts.map((post) => (
+                <div
+                  key={post._id}
+                  className="explore-grid-item"
+                  onClick={() => setActiveModalPost(post)}
+                >
+                  <img
+                    src={post.images?.[0]?.url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600'}
+                    alt={post.caption || 'Explore post'}
+                    loading="lazy"
+                  />
+
+                  {post.images && post.images.length > 1 && (
+                    <div className="carousel-indicator">
+                      <Layers size={16} />
+                    </div>
+                  )}
+
+                  <div className="explore-overlay">
+                    <div className="overlay-stat">
+                      <Heart size={20} fill="#ffffff" />
+                      <span>{post.likesCount || post.likes?.length || 0}</span>
+                    </div>
+                    <div className="overlay-stat">
+                      <MessageCircle size={20} fill="#ffffff" />
+                      <span>{post.commentsCount || 0}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {hasMore && (
+              <div className="explore-load-more">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => fetchExplorePosts(page + 1)}
+                  disabled={loadingMore}
+                >
+                  {loadingMore ? (
+                    <>
+                      <RefreshCw size={16} className="animate-spin" /> Loading...
+                    </>
+                  ) : (
+                    'Discover More'
+                  )}
+                </button>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="card explore-empty">
+            <Compass size={40} className="empty-icon" />
+            <h3>No posts found yet</h3>
+            <p>Be the very first creator to share a moment on Vibely!</p>
+          </div>
+        )}
+
+        {activeModalPost && (
+          <PostDetailModal
+            post={activeModalPost}
+            isOpen={!!activeModalPost}
+            onClose={() => setActiveModalPost(null)}
+            onPostUpdated={(updated) => {
+              setPosts((prev) =>
+                prev.map((p) => (p._id === updated._id ? { ...p, ...updated } : p))
+              );
+            }}
+          />
+        )}
+      </div>
+    </div>
+
+      <aside className="app-right-sidebar">
+        <RightSidebar
+          suggestedUsers={suggestedUsers}
+          onFollowUser={handleFollowToggle}
+          currentUser={isAuthenticated ? user : null}
+        />
+      </aside>
+    </>
+  );
+};
+
+export default Explore;

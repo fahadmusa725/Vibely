@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Environment variables - never commit these
+.env
+*.env.local
+*.env.production
+
+# Build output
+dist/
+build/
+
+# Editor artifacts
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+nodemon-debug.log*
+
+# Runtime data
+pids
+*.pid
+
+# Coverage
+coverage/
