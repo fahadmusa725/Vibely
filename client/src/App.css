@@ -1,4 +1,9 @@
 
+.app-loading {
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
 .app-container {
   display: flex;
   flex-direction: column;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faCheckDouble, faHeart, faLock, faRepeat, faTrophy, faUserPlus, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faCheckDouble, faHeart, faRepeat, faTrophy, faUserPlus, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
 import { faBell as farBell, faMessage as farMessage } from '@fortawesome/free-regular-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import VerifiedBadge from '../components/VerifiedBadge';
@@ -77,7 +77,7 @@ const MOCK_NOTIFICATIONS = [
 ];
 
 const Notifications = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
   const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
@@ -93,23 +93,6 @@ const Notifications = () => {
     if (activeTab === 'likes') return n.filter === 'likes' || n.type === 'like';
     return true;
   });
-
-  if (!isAuthenticated) {
-    return (
-      <div className="notif-auth-gate">
-        <div className="auth-gate-inner card">
-          <div className="auth-gate-icon">
-            <FontAwesomeIcon icon={faLock} style={{ fontSize: 36 }} />
-          </div>
-          <h2>Sign in to view your notifications</h2>
-          <p>Stay updated when people like, comment, or follow your profile.</p>
-          <button className="btn btn-primary" onClick={() => navigate('/login')}>
-            Sign In
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   const renderIcon = (type) => {
     switch (type) {

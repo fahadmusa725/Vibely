@@ -11,7 +11,7 @@ import './Profile.css';
 
 const Profile = () => {
   const { username } = useParams();
-  const { user: currentUser, isAuthenticated, updateUser } = useAuth();
+  const { user: currentUser, updateUser } = useAuth();
   const navigate = useNavigate();
 
   const [profileUser, setProfileUser] = useState(null);
@@ -85,10 +85,6 @@ const Profile = () => {
   };
 
   const handleUserFollowInModal = async (targetUser) => {
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
 
     const currentIsFollowing = targetUser.isFollowing;
     setFollowUsersList((prev) =>
@@ -122,10 +118,6 @@ const Profile = () => {
   };
 
   const handleFollowToggle = async () => {
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
 
     const nextState = !isFollowing;
     setIsFollowing(nextState);
@@ -455,7 +447,7 @@ const Profile = () => {
                             </span>
                           </div>
                         </div>
-                        {!isSelf && isAuthenticated && (
+                        {!isSelf && (
                           <button
                             className={`btn ${
                               u.isFollowing ? 'btn-secondary' : 'btn-primary'

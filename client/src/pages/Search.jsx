@@ -14,7 +14,7 @@ const Search = () => {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [popularCreators, setPopularCreators] = useState([]);
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -68,10 +68,6 @@ const Search = () => {
 
   const handleFollowToggle = async (e, targetUserId) => {
     e.stopPropagation();
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
     try {
       await api.post(`/users/${targetUserId}/follow`);
       setResults((prev) =>
@@ -171,7 +167,7 @@ const Search = () => {
                   </div>
 
                   <div className="user-result-action">
-                    {!isCurrentUser && isAuthenticated && (
+                    {!isCurrentUser && (
                       <button
                         className={`btn ${isFollowing ? 'btn-secondary' : 'btn-primary'} btn-sm`}
                         onClick={(e) => handleFollowToggle(e, creator._id)}

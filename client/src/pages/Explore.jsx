@@ -9,7 +9,7 @@ import api from '../services/api';
 import './Explore.css';
 
 const Explore = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
@@ -26,7 +26,7 @@ const Explore = () => {
   useEffect(() => {
     fetchExplorePosts(1);
     fetchSuggested();
-  }, [isAuthenticated, activeTag]);
+  }, [activeTag]);
 
   const fetchExplorePosts = async (pageNum = 1) => {
     if (pageNum === 1) setLoading(true);
@@ -181,7 +181,7 @@ const Explore = () => {
         <RightSidebar
           suggestedUsers={suggestedUsers}
           onFollowUser={handleFollowToggle}
-          currentUser={isAuthenticated ? user : null}
+          currentUser={user}
         />
       </aside>
     </>

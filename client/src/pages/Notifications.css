@@ -308,15 +308,3 @@
   font-size: 0.75rem;
   color: var(--text-tertiary);
 }
-
-.notif-auth-gate {
-  padding: 40px 20px;
-}
-.notif-auth-gate .auth-gate-inner {
-  padding: 30px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}

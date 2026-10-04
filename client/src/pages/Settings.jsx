@@ -173,20 +173,9 @@ const AppearancePanel = () => {
 };
 
 const Settings = () => {
-  const { user, isAuthenticated, updateUser } = useAuth();
+  const { user, updateUser } = useAuth();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('profile');
-
-  if (!isAuthenticated) {
-    return (
-      <div className="settings-unauthenticated">
-        <h2>Sign in to access Settings</h2>
-        <button className="btn btn-primary" onClick={() => navigate('/login')}>
-          Sign In
-        </button>
-      </div>
-    );
-  }
 
   const renderPanel = () => {
     switch (activeSection) {

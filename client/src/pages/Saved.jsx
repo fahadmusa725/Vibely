@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faLock } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import PostCard from '../components/PostCard';
@@ -10,19 +10,15 @@ import api from '../services/api';
 import './Saved.css';
 
 const Saved = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [savedPosts, setSavedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeModalPost, setActiveModalPost] = useState(null);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      setLoading(false);
-      return;
-    }
     fetchSavedPosts();
-  }, [isAuthenticated]);
+  }, []);
 
   const fetchSavedPosts = async () => {
     setLoading(true);
@@ -42,23 +38,6 @@ const Saved = () => {
   const handlePostDeleted = (deletedId) => {
     setSavedPosts((prev) => prev.filter((p) => p._id !== deletedId));
   };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="saved-auth-gate">
-        <div className="auth-gate-inner">
-          <div className="auth-gate-icon">
-            <FontAwesomeIcon icon={faLock} style={{ fontSize: 36 }} />
-          </div>
-          <h2>Sign in to see your saved posts</h2>
-          <p>Your bookmarked posts will appear here after you sign in.</p>
-          <button className="btn btn-primary" onClick={() => navigate('/login')}>
-            Sign In
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="saved-page">

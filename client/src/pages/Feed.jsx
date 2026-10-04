@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowsRotate, faCompass, faFaceSmile, faImage, faLocationDot, faRightToBracket, faUserPlus, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate, faCompass, faFaceSmile, faImage, faLocationDot, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import PostCard from '../components/PostCard';
 import PostDetailModal from '../components/PostDetailModal';
@@ -10,42 +10,8 @@ import StoriesTray from '../components/stories/StoriesTray';
 import api from '../services/api';
 import './Feed.css';
 
-const LoggedOutLanding = () => {
-  const navigate = useNavigate();
-  return (
-    <div className="logged-out-landing">
-      <div className="lol-badge">
-        <FontAwesomeIcon icon={faWandMagicSparkles} style={{ fontSize: 32 }} />
-      </div>
-      <h2 className="lol-headline">Welcome to Vibely</h2>
-      <p className="lol-sub">
-        Sign in to see posts from people you follow, discover trending content,
-        and share your own moments with the community.
-      </p>
-      <div className="lol-actions">
-        <button
-          id="feed-signin-btn"
-          className="btn btn-primary"
-          onClick={() => navigate('/login')}
-        >
-          <FontAwesomeIcon icon={faRightToBracket} style={{ fontSize: 16 }} />
-          <span>Sign In</span>
-        </button>
-        <button
-          id="feed-join-btn"
-          className="btn btn-secondary"
-          onClick={() => navigate('/register')}
-        >
-          <FontAwesomeIcon icon={faUserPlus} style={{ fontSize: 16 }} />
-          <span>Join Community</span>
-        </button>
-      </div>
-    </div>
-  );
-};
-
 const Feed = ({ onOpenCreateModal }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [posts, setPosts] = useState([]);
@@ -60,10 +26,9 @@ const Feed = ({ onOpenCreateModal }) => {
 
   useEffect(() => {
 
-    if (!isAuthenticated) return;
     fetchFeed(1);
     fetchSuggested();
-  }, [isAuthenticated]);
+  }, []);
 
   const fetchFeed = async (pageNum = 1) => {
     if (pageNum === 1) setLoading(true);
@@ -112,16 +77,6 @@ const Feed = ({ onOpenCreateModal }) => {
   const handlePostDeleted = (deletedId) => {
     setPosts((prev) => prev.filter((p) => p._id !== deletedId));
   };
-
-  if (!isAuthenticated) {
-    return (
-      <>
-        <div className="app-center-col">
-          <LoggedOutLanding />
-        </div>
-      </>
-    );
-  }
 
   return (
     <>
