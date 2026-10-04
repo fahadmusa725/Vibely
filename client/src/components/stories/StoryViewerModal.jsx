@@ -1,36 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { getAvatarUrl } from '../../utils/avatar';
 import './StoryViewerModal.css';
 
-const StoryViewerModal = ({ groups, initialGroupIndex, onClose, onStoryDeleted }) => {
+const StoryViewerModal = ({ groups, initialGroupIndex, onClose }) => {
   const { user } = useAuth();
   const [groupIndex, setGroupIndex] = useState(initialGroupIndex);
   const [storyIndex, setStoryIndex] = useState(0);
 
   const currentGroup = groups[groupIndex];
   const currentStory = currentGroup?.stories[storyIndex];
+  const viewRequest = useRef(null);
+
+  const closeViewer = useCallback(async () => {
+    await viewRequest.current;
+    onClose();
+  }, [onClose]);
 
   useEffect(() => {
-    if (currentStory && user) {
-      const isAlreadyViewed = currentStory.viewers?.some(
-        (v) => (typeof v === 'string' ? v : v.user?._id || v.user) === user._id
-      );
-      if (!isAlreadyViewed) {
-        api.post(`/stories/${currentStory._id}/view`).catch((err) => {
+    if (currentStory && !currentStory.isSeen) {
+      viewRequest.current = api
+        .post(`/stories/${currentStory._id}/view`)
+        .catch((err) => {
           console.error('Failed to mark story as viewed:', err);
         });
-      }
     }
-  }, [currentStory, user]);
+  }, [currentStory]);
 
   useEffect(() => {
     if (!currentStory) return;
     const timer = setTimeout(() => {
-      handleNext();
+      if (storyIndex < currentGroup.stories.length - 1) {
+        setStoryIndex((prev) => prev + 1);
+      } else if (groupIndex < groups.length - 1) {
+        setGroupIndex((prev) => prev + 1);
+        setStoryIndex(0);
+      } else {
+        closeViewer();
+      }
     }, 5000);
     return () => clearTimeout(timer);
-  }, [groupIndex, storyIndex, groups]);
+  }, [currentGroup, currentStory, groupIndex, storyIndex, groups, closeViewer]);
 
   if (!currentGroup || !currentStory) return null;
 
@@ -43,7 +56,7 @@ const StoryViewerModal = ({ groups, initialGroupIndex, onClose, onStoryDeleted }
       setGroupIndex(groupIndex + 1);
       setStoryIndex(0);
     } else {
-      onClose();
+      closeViewer();
     }
   };
 
@@ -60,19 +73,14 @@ const StoryViewerModal = ({ groups, initialGroupIndex, onClose, onStoryDeleted }
     if (!window.confirm('Delete this story?')) return;
     try {
       await api.delete(`/stories/${currentStory._id}`);
-      if (onStoryDeleted) onStoryDeleted();
-      if (currentGroup.stories.length <= 1) {
-        onClose();
-      } else {
-        setStoryIndex((prev) => Math.max(0, prev - 1));
-      }
+      closeViewer();
     } catch (err) {
       console.error('Failed to delete story:', err);
     }
   };
 
   return (
-    <div className="story-viewer-overlay" onClick={onClose}>
+    <div className="story-viewer-overlay" onClick={closeViewer}>
       <div className="story-viewer-content" onClick={(e) => e.stopPropagation()}>
         <div className="story-progress-bar-container">
           {currentGroup.stories.map((s, idx) => (
@@ -89,7 +97,7 @@ const StoryViewerModal = ({ groups, initialGroupIndex, onClose, onStoryDeleted }
         <div className="story-viewer-header">
           <div className="story-viewer-user">
             <img
-              src={currentGroup.user.avatar || 'https://via.placeholder.com/150'}
+              src={getAvatarUrl(currentGroup.user.avatar, currentGroup.user.fullName)}
               alt={currentGroup.user.username}
               className="story-viewer-avatar"
             />
@@ -98,11 +106,11 @@ const StoryViewerModal = ({ groups, initialGroupIndex, onClose, onStoryDeleted }
           <div className="story-viewer-actions">
             {isMyStory && (
               <button className="story-delete-btn" onClick={handleDelete} title="Delete Story">
-                🗑️
+                <FontAwesomeIcon icon={faTrash} style={{ fontSize: 18 }} />
               </button>
             )}
-            <button className="story-close-btn" onClick={onClose}>
-              ✕
+            <button className="story-close-btn" onClick={closeViewer}>
+              <FontAwesomeIcon icon={faXmark} style={{ fontSize: 18 }} />
             </button>
           </div>
         </div>

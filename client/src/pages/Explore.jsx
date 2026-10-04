@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Compass, Heart, MessageCircle, Layers, RefreshCw, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowsRotate, faComment, faCompass, faHeart, faLayerGroup, faXmark } from '@fortawesome/free-solid-svg-icons';
 import PostDetailModal from '../components/PostDetailModal';
 import RightSidebar from '../components/RightSidebar';
 import { useAuth } from '../context/AuthContext';
@@ -75,7 +76,7 @@ const Explore = () => {
         <div className="explore-center">
         <div className="explore-header">
           <div className="explore-badge">
-            <Compass size={18} />
+            <FontAwesomeIcon icon={faCompass} style={{ fontSize: 18 }} />
             <span>Explore Community</span>
           </div>
           <h2>Discover Fresh Moments</h2>
@@ -88,7 +89,7 @@ const Explore = () => {
                 onClick={() => navigate('/explore')}
                 aria-label="Clear tag filter"
               >
-                <X size={13} />
+                <FontAwesomeIcon icon={faXmark} style={{ fontSize: 13 }} />
               </button>
             </div>
           )}
@@ -117,17 +118,17 @@ const Explore = () => {
 
                   {post.images && post.images.length > 1 && (
                     <div className="carousel-indicator">
-                      <Layers size={16} />
+                      <FontAwesomeIcon icon={faLayerGroup} style={{ fontSize: 16 }} />
                     </div>
                   )}
 
                   <div className="explore-overlay">
                     <div className="overlay-stat">
-                      <Heart size={20} fill="#ffffff" />
+                      <FontAwesomeIcon icon={faHeart} style={{ fontSize: 20, color: '#ffffff' }} />
                       <span>{post.likesCount || post.likes?.length || 0}</span>
                     </div>
                     <div className="overlay-stat">
-                      <MessageCircle size={20} fill="#ffffff" />
+                      <FontAwesomeIcon icon={faComment} style={{ fontSize: 20, color: '#ffffff' }} />
                       <span>{post.commentsCount || 0}</span>
                     </div>
                   </div>
@@ -144,7 +145,7 @@ const Explore = () => {
                 >
                   {loadingMore ? (
                     <>
-                      <RefreshCw size={16} className="animate-spin" /> Loading...
+                      <FontAwesomeIcon icon={faArrowsRotate} style={{ fontSize: 16 }} className="animate-spin" /> Loading...
                     </>
                   ) : (
                     'Discover More'
@@ -155,7 +156,7 @@ const Explore = () => {
           </>
         ) : (
           <div className="card explore-empty">
-            <Compass size={40} className="empty-icon" />
+            <FontAwesomeIcon icon={faCompass} style={{ fontSize: 40 }} className="empty-icon" />
             <h3>No posts found yet</h3>
             <p>Be the very first creator to share a moment on Vibely!</p>
           </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Search as SearchIcon, CheckCircle, ArrowRight, Users } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight, faCircleCheck, faMagnifyingGlass, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './Search.css';
@@ -97,7 +98,7 @@ const Search = () => {
   return (
     <div className="search-page-container">
       <div className="search-input-wrapper card">
-        <SearchIcon size={20} className="search-icon" />
+        <FontAwesomeIcon icon={faMagnifyingGlass} style={{ fontSize: 20 }} className="search-icon" />
         <input
           type="text"
           placeholder="Search creators by username or name..."
@@ -162,7 +163,7 @@ const Search = () => {
                     <div className="user-result-name-row">
                       <span className="user-fullname">{creator.fullName}</span>
                       {creator.isVerified && (
-                        <CheckCircle size={14} className="verified-badge" />
+                        <FontAwesomeIcon icon={faCircleCheck} style={{ fontSize: 14 }} className="verified-badge" />
                       )}
                     </div>
                     <span className="user-handle">@{creator.username}</span>
@@ -178,7 +179,7 @@ const Search = () => {
                         {isFollowing ? 'Following' : 'Follow'}
                       </button>
                     )}
-                    <ArrowRight size={18} className="arrow-nav-icon" />
+                    <FontAwesomeIcon icon={faArrowRight} style={{ fontSize: 18 }} className="arrow-nav-icon" />
                   </div>
                 </div>
               );
@@ -186,7 +187,7 @@ const Search = () => {
           </div>
         ) : (
           <div className="card empty-search-state">
-            <Users size={40} className="empty-icon" />
+            <FontAwesomeIcon icon={faUsers} style={{ fontSize: 40 }} className="empty-icon" />
             <h4>No creators found</h4>
             <p>Try searching for a different username or full name</p>
           </div>

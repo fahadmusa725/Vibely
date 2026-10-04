@@ -1,18 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Heart,
-  MessageCircle,
-  Share2,
-  Bookmark,
-  ChevronLeft,
-  ChevronRight,
-  MoreHorizontal,
-  Trash2,
-  Edit3,
-  X,
-  Check,
-} from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBookmark, faCheck, faChevronLeft, faChevronRight, faEllipsis, faHeart, faPen, faShareNodes, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faBookmark as farBookmark, faComment as farComment, faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import VerifiedBadge from './VerifiedBadge';
 import { formatRelativeTime, formatFullDateTooltip } from '../utils/formatTime';
@@ -224,7 +214,7 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
       <article className="post-card card">
         {toastMessage && (
           <div className="postcard-toast">
-            <Check size={16} />
+            <FontAwesomeIcon icon={faCheck} style={{ fontSize: 16 }} />
             <span>{toastMessage}</span>
           </div>
         )}
@@ -261,24 +251,24 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
               onClick={() => setShowOptions((prev) => !prev)}
               aria-label="Post options"
             >
-              <MoreHorizontal size={19} />
+              <FontAwesomeIcon icon={faEllipsis} style={{ fontSize: 19 }} />
             </button>
 
             {showOptions && (
               <div className="post-options-dropdown">
                 <button className="dropdown-item" onClick={handleSaveToggle}>
-                  <Bookmark size={15} fill={isSaved ? 'currentColor' : 'none'} />
+                  <FontAwesomeIcon icon={isSaved ? faBookmark : farBookmark} style={{ fontSize: 15 }} />
                   <span>{isSaved ? 'Unsave Post' : 'Save Post'}</span>
                 </button>
 
                 {isAuthor && (
                   <>
                     <button className="dropdown-item" onClick={openEditModal}>
-                      <Edit3 size={15} />
+                      <FontAwesomeIcon icon={faPen} style={{ fontSize: 15 }} />
                       <span>Edit Post</span>
                     </button>
                     <button className="dropdown-item danger" onClick={handleDelete}>
-                      <Trash2 size={15} />
+                      <FontAwesomeIcon icon={faTrash} style={{ fontSize: 15 }} />
                       <span>Delete Post</span>
                     </button>
                   </>
@@ -314,10 +304,10 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
             {images.length > 1 && (
               <>
                 <button className="carousel-btn prev" onClick={handlePrevImage} aria-label="Previous image">
-                  <ChevronLeft size={18} />
+                  <FontAwesomeIcon icon={faChevronLeft} style={{ fontSize: 18 }} />
                 </button>
                 <button className="carousel-btn next" onClick={handleNextImage} aria-label="Next image">
-                  <ChevronRight size={18} />
+                  <FontAwesomeIcon icon={faChevronRight} style={{ fontSize: 18 }} />
                 </button>
                 <div className="carousel-dots">
                   {images.map((_, idx) => (
@@ -332,7 +322,7 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
 
             {likeAnimating && (
               <div className="heart-pulse-overlay">
-                <Heart size={88} fill="#ed4956" color="#ed4956" className="animated-heart" />
+                <FontAwesomeIcon icon={faHeart} style={{ fontSize: 88, color: '#ed4956' }} className="animated-heart" />
               </div>
             )}
           </div>
@@ -340,11 +330,7 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
 
         <div className="post-stats-row">
           <div className="stats-likes-left" onClick={handleLikeToggle}>
-            <Heart
-              size={16}
-              fill={likesCount > 0 ? '#ed4956' : 'none'}
-              color={likesCount > 0 ? '#ed4956' : 'currentColor'}
-            />
+            <FontAwesomeIcon icon={likesCount > 0 ? faHeart : farHeart} style={{ fontSize: 16, color: likesCount > 0 ? '#ed4956' : 'currentColor' }} />
             <span>{likesCount} {likesCount === 1 ? 'like' : 'likes'}</span>
           </div>
 
@@ -363,11 +349,7 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
             className={`post-footer-btn ${isLiked ? 'liked' : ''}`}
             onClick={handleLikeToggle}
           >
-            <Heart
-              size={18}
-              fill={isLiked ? '#ed4956' : 'none'}
-              color={isLiked ? '#ed4956' : 'currentColor'}
-            />
+            <FontAwesomeIcon icon={isLiked ? faHeart : farHeart} style={{ fontSize: 18, color: isLiked ? '#ed4956' : 'currentColor' }} />
             <span>Like</span>
           </button>
 
@@ -375,12 +357,12 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
             className="post-footer-btn"
             onClick={() => onOpenPostModal ? onOpenPostModal(post) : navigate(`/post/${post._id}`)}
           >
-            <MessageCircle size={18} />
+            <FontAwesomeIcon icon={farComment} style={{ fontSize: 18 }} />
             <span>Comment</span>
           </button>
 
           <button className="post-footer-btn" onClick={handleShare}>
-            <Share2 size={18} />
+            <FontAwesomeIcon icon={faShareNodes} style={{ fontSize: 18 }} />
             <span>Share</span>
           </button>
         </div>
@@ -398,7 +380,7 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
             <div className="edit-post-header">
               <h2>Edit Post</h2>
               <button className="icon-btn-ghost" onClick={() => setShowEditModal(false)}>
-                <X size={18} />
+                <FontAwesomeIcon icon={faXmark} style={{ fontSize: 18 }} />
               </button>
             </div>
 

@@ -1,20 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import {
-  Home,
-  Compass,
-  Users,
-  Bookmark,
-  Bell,
-  Search,
-  ChevronDown,
-  User,
-  Settings,
-  LogOut,
-  Moon,
-  Sun,
-  Flame,
-} from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faCompass, faFire, faGear, faHouse, faMagnifyingGlass, faMoon, faRightFromBracket, faSun, faUser, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faBell as farBell, faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import './Navbar.css';
@@ -53,13 +41,13 @@ const Navbar = ({ onOpenCreateModal }) => {
         <div className="navbar-left">
           <div className="navbar-brand" onClick={() => navigate('/')}>
             <div className="brand-badge">
-              <Flame className="brand-flame" size={20} />
+              <FontAwesomeIcon icon={faFire} style={{ fontSize: 20 }} className="brand-flame" />
             </div>
             <span className="brand-title">Vibely</span>
           </div>
 
           <form className="navbar-search-form" onSubmit={handleSearchSubmit}>
-            <Search size={17} className="search-pill-icon" />
+            <FontAwesomeIcon icon={faMagnifyingGlass} style={{ fontSize: 17 }} className="search-pill-icon" />
             <input
               type="text"
               className="navbar-search-input"
@@ -77,7 +65,7 @@ const Navbar = ({ onOpenCreateModal }) => {
             className={({ isActive }) => `nav-tab-item ${isActive ? 'active' : ''}`}
             title="Feed"
           >
-            <Home size={22} />
+            <FontAwesomeIcon icon={faHouse} style={{ fontSize: 22 }} />
           </NavLink>
 
           <NavLink
@@ -85,7 +73,7 @@ const Navbar = ({ onOpenCreateModal }) => {
             className={({ isActive }) => `nav-tab-item ${isActive ? 'active' : ''}`}
             title="Discover"
           >
-            <Compass size={22} />
+            <FontAwesomeIcon icon={faCompass} style={{ fontSize: 22 }} />
           </NavLink>
 
           <NavLink
@@ -93,7 +81,7 @@ const Navbar = ({ onOpenCreateModal }) => {
             className={({ isActive }) => `nav-tab-item ${isActive ? 'active' : ''}`}
             title="People"
           >
-            <Users size={22} />
+            <FontAwesomeIcon icon={faUsers} style={{ fontSize: 22 }} />
           </NavLink>
 
           <NavLink
@@ -101,7 +89,7 @@ const Navbar = ({ onOpenCreateModal }) => {
             className={({ isActive }) => `nav-tab-item ${isActive ? 'active' : ''}`}
             title="Saved"
           >
-            <Bookmark size={22} />
+            <FontAwesomeIcon icon={farBookmark} style={{ fontSize: 22 }} />
           </NavLink>
         </nav>
 
@@ -111,7 +99,7 @@ const Navbar = ({ onOpenCreateModal }) => {
             className={({ isActive }) => `nav-bell-btn ${isActive ? 'active' : ''}`}
             title="Notifications"
           >
-            <Bell size={20} />
+            <FontAwesomeIcon icon={farBell} style={{ fontSize: 20 }} />
           </NavLink>
 
           {isAuthenticated ? (
@@ -126,8 +114,9 @@ const Navbar = ({ onOpenCreateModal }) => {
                   alt={user?.fullName || 'Avatar'}
                   className="nav-avatar-img"
                 />
-                <ChevronDown
-                  size={15}
+                <FontAwesomeIcon
+                  icon={faChevronDown}
+                  style={{ fontSize: 15 }}
                   className={`chevron-icon ${isDropdownOpen ? 'open' : ''}`}
                 />
               </button>
@@ -157,7 +146,7 @@ const Navbar = ({ onOpenCreateModal }) => {
                       navigate(`/profile/${user?.username}`);
                     }}
                   >
-                    <User size={17} />
+                    <FontAwesomeIcon icon={faUser} style={{ fontSize: 17 }} />
                     <span>Profile</span>
                   </button>
 
@@ -168,7 +157,7 @@ const Navbar = ({ onOpenCreateModal }) => {
                       navigate('/settings');
                     }}
                   >
-                    <Settings size={17} />
+                    <FontAwesomeIcon icon={faGear} style={{ fontSize: 17 }} />
                     <span>Settings</span>
                   </button>
 
@@ -178,7 +167,7 @@ const Navbar = ({ onOpenCreateModal }) => {
                       toggleTheme();
                     }}
                   >
-                    {theme === 'light' ? <Moon size={17} /> : <Sun size={17} />}
+                    {theme === 'light' ? <FontAwesomeIcon icon={faMoon} style={{ fontSize: 17 }} /> : <FontAwesomeIcon icon={faSun} style={{ fontSize: 17 }} />}
                     <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
                   </button>
 
@@ -192,7 +181,7 @@ const Navbar = ({ onOpenCreateModal }) => {
                       navigate('/login');
                     }}
                   >
-                    <LogOut size={17} />
+                    <FontAwesomeIcon icon={faRightFromBracket} style={{ fontSize: 17 }} />
                     <span>Log out</span>
                   </button>
                 </div>

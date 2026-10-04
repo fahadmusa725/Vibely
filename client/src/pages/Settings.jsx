@@ -1,33 +1,24 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Settings as SettingsIcon,
-  User,
-  Lock,
-  Bell,
-  Shield,
-  Palette,
-  ChevronRight,
-  Save,
-  ArrowLeft,
-} from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faBell, faChevronRight, faFloppyDisk, faGear, faLock, faPalette, faShield, faUser } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import api from '../services/api';
 import './Settings.css';
 
 const SECTIONS = [
-  { id: 'profile', label: 'Edit Profile', icon: User },
-  { id: 'privacy', label: 'Privacy', icon: Shield },
-  { id: 'notifications', label: 'Notifications', icon: Bell },
-  { id: 'appearance', label: 'Appearance', icon: Palette },
-  { id: 'security', label: 'Security', icon: Lock },
+  { id: 'profile', label: 'Edit Profile', icon: faUser },
+  { id: 'privacy', label: 'Privacy', icon: faShield },
+  { id: 'notifications', label: 'Notifications', icon: faBell },
+  { id: 'appearance', label: 'Appearance', icon: faPalette },
+  { id: 'security', label: 'Security', icon: faLock },
 ];
 
 const PlaceholderPanel = ({ label }) => (
   <div className="settings-placeholder">
     <div className="settings-placeholder-icon">
-      <SettingsIcon size={32} />
+      <FontAwesomeIcon icon={faGear} style={{ fontSize: 32 }} />
     </div>
     <h3>{label}</h3>
     <p>This section is coming soon. Stay tuned for updates.</p>
@@ -143,7 +134,7 @@ const EditProfilePanel = ({ user, updateUser }) => {
         className="btn btn-primary settings-save-btn"
         disabled={saving}
       >
-        <Save size={16} />
+        <FontAwesomeIcon icon={faFloppyDisk} style={{ fontSize: 16 }} />
         <span>{saving ? 'Saving…' : 'Save Changes'}</span>
       </button>
     </form>
@@ -215,14 +206,14 @@ const Settings = () => {
   return (
     <div className="settings-page">
       <button className="settings-back-btn" onClick={() => navigate(-1)}>
-        <ArrowLeft size={18} />
+        <FontAwesomeIcon icon={faArrowLeft} style={{ fontSize: 18 }} />
         <span>Back</span>
       </button>
 
       <div className="settings-layout">
         <nav className="settings-nav card">
           <div className="settings-nav-header">
-            <SettingsIcon size={18} />
+            <FontAwesomeIcon icon={faGear} style={{ fontSize: 18 }} />
             <span>Settings</span>
           </div>
           <ul className="settings-nav-list">
@@ -233,9 +224,9 @@ const Settings = () => {
                   className={`settings-nav-item ${activeSection === id ? 'active' : ''}`}
                   onClick={() => setActiveSection(id)}
                 >
-                  <Icon size={17} />
+                  <FontAwesomeIcon icon={Icon} style={{ fontSize: 17 }} />
                   <span>{label}</span>
-                  <ChevronRight size={14} className="settings-nav-arrow" />
+                  <FontAwesomeIcon icon={faChevronRight} style={{ fontSize: 14 }} className="settings-nav-arrow" />
                 </button>
               </li>
             ))}

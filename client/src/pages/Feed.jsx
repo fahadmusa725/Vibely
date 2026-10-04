@@ -1,15 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Sparkles,
-  RefreshCw,
-  Compass,
-  Image as ImageIcon,
-  Smile,
-  MapPin,
-  LogIn,
-  UserPlus,
-} from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowsRotate, faCompass, faFaceSmile, faImage, faLocationDot, faRightToBracket, faUserPlus, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import PostCard from '../components/PostCard';
 import PostDetailModal from '../components/PostDetailModal';
@@ -23,7 +15,7 @@ const LoggedOutLanding = () => {
   return (
     <div className="logged-out-landing">
       <div className="lol-badge">
-        <Sparkles size={32} />
+        <FontAwesomeIcon icon={faWandMagicSparkles} style={{ fontSize: 32 }} />
       </div>
       <h2 className="lol-headline">Welcome to Vibely</h2>
       <p className="lol-sub">
@@ -36,7 +28,7 @@ const LoggedOutLanding = () => {
           className="btn btn-primary"
           onClick={() => navigate('/login')}
         >
-          <LogIn size={16} />
+          <FontAwesomeIcon icon={faRightToBracket} style={{ fontSize: 16 }} />
           <span>Sign In</span>
         </button>
         <button
@@ -44,7 +36,7 @@ const LoggedOutLanding = () => {
           className="btn btn-secondary"
           onClick={() => navigate('/register')}
         >
-          <UserPlus size={16} />
+          <FontAwesomeIcon icon={faUserPlus} style={{ fontSize: 16 }} />
           <span>Join Community</span>
         </button>
       </div>
@@ -156,7 +148,7 @@ const Feed = ({ onOpenCreateModal }) => {
               className="composer-action-btn"
               onClick={onOpenCreateModal}
             >
-              <ImageIcon size={18} className="c-icon photo-icon" />
+              <FontAwesomeIcon icon={faImage} style={{ fontSize: 18 }} className="c-icon photo-icon" />
               <span>Photo/Video</span>
             </button>
 
@@ -164,7 +156,7 @@ const Feed = ({ onOpenCreateModal }) => {
               className="composer-action-btn"
               onClick={onOpenCreateModal}
             >
-              <Smile size={18} className="c-icon feeling-icon" />
+              <FontAwesomeIcon icon={faFaceSmile} style={{ fontSize: 18 }} className="c-icon feeling-icon" />
               <span>Feeling</span>
             </button>
 
@@ -172,7 +164,7 @@ const Feed = ({ onOpenCreateModal }) => {
               className="composer-action-btn"
               onClick={onOpenCreateModal}
             >
-              <MapPin size={18} className="c-icon location-icon" />
+              <FontAwesomeIcon icon={faLocationDot} style={{ fontSize: 18 }} className="c-icon location-icon" />
               <span>Location</span>
             </button>
           </div>
@@ -213,7 +205,7 @@ const Feed = ({ onOpenCreateModal }) => {
                 >
                   {loadingMore ? (
                     <>
-                      <RefreshCw size={15} className="animate-spin" /> Loading...
+                      <FontAwesomeIcon icon={faArrowsRotate} style={{ fontSize: 15 }} className="animate-spin" /> Loading...
                     </>
                   ) : (
                     'Load More Posts'
@@ -225,13 +217,13 @@ const Feed = ({ onOpenCreateModal }) => {
         ) : (
           <div className="card feed-empty-state">
             <div className="empty-illustration-badge">
-              <Sparkles size={36} color="var(--accent-primary)" />
+              <FontAwesomeIcon icon={faWandMagicSparkles} style={{ fontSize: 36, color: 'var(--accent-primary)' }} />
             </div>
             <h3>Your Feed is Ready</h3>
             <p>Follow creators to personalize your feed or share your first post.</p>
             <div className="empty-actions">
               <button className="btn btn-primary" onClick={() => navigate('/explore')}>
-                <Compass size={16} />
+                <FontAwesomeIcon icon={faCompass} style={{ fontSize: 16 }} />
                 <span>Discover Creators</span>
               </button>
             </div>

@@ -3,6 +3,7 @@ import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import StoryViewerModal from './StoryViewerModal';
 import CreateStoryModal from './CreateStoryModal';
+import { getAvatarUrl } from '../../utils/avatar';
 import './StoriesTray.css';
 
 const StoriesTray = () => {
@@ -44,10 +45,6 @@ const StoriesTray = () => {
     fetchStories();
   };
 
-  const handleStoryDeleted = () => {
-    fetchStories();
-  };
-
   return (
     <div className="stories-tray-container">
       <div className="stories-scroll-wrapper">
@@ -66,7 +63,7 @@ const StoriesTray = () => {
             }}
           >
             <img
-              src={user?.avatar || 'https://via.placeholder.com/150'}
+              src={getAvatarUrl(user?.avatar, user?.fullName)}
               alt={user?.username || 'My Story'}
               className="story-avatar-img"
             />
@@ -100,7 +97,7 @@ const StoriesTray = () => {
                   }`}
                 >
                   <img
-                    src={group.user.avatar || 'https://via.placeholder.com/150'}
+                    src={getAvatarUrl(group.user.avatar, group.user.fullName)}
                     alt={group.user.username}
                     className="story-avatar-img"
                   />
@@ -119,7 +116,6 @@ const StoriesTray = () => {
             setActiveGroupIndex(null);
             fetchStories();
           }}
-          onStoryDeleted={handleStoryDeleted}
         />
       )}
 

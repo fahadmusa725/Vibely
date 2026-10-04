@@ -1,18 +1,6 @@
 import React, { useState, useRef } from 'react';
-import {
-  X,
-  Image as ImageIcon,
-  MapPin,
-  Hash,
-  Loader2,
-  ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
-  Sparkles,
-  Globe,
-  SmilePlus,
-  Tag,
-} from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faChevronLeft, faChevronRight, faFaceSmile, faGlobe, faHashtag, faImage, faLocationDot, faSpinner, faTag, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './CreatePostModal.css';
@@ -124,7 +112,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
         <div className="create-modal-header">
           {step === 2 ? (
             <button className="icon-btn-ghost back-step-btn" onClick={() => setStep(1)}>
-              <ArrowLeft size={20} />
+              <FontAwesomeIcon icon={faArrowLeft} style={{ fontSize: 20 }} />
             </button>
           ) : (
             <div className="header-placeholder" />
@@ -148,12 +136,12 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
                 onClick={handleSubmit}
                 disabled={loading || (!caption.trim() && previewUrls.length === 0)}
               >
-                {loading ? <Loader2 size={16} className="animate-spin" /> : 'Post'}
+                {loading ? <FontAwesomeIcon icon={faSpinner} className="animate-spin" style={{ fontSize: 16 }} /> : 'Post'}
               </button>
             )
           ) : (
             <button className="icon-btn-ghost" onClick={handleClose}>
-              <X size={20} />
+              <FontAwesomeIcon icon={faXmark} style={{ fontSize: 20 }} />
             </button>
           )}
         </div>
@@ -168,7 +156,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
                 onClick={() => fileInputRef.current?.click()}
               >
                 <div className="dropzone-icon-ring">
-                  <ImageIcon size={48} strokeWidth={1.5} color="#0095f6" />
+                  <FontAwesomeIcon icon={faImage} style={{ fontSize: 48, color: '#0095f6' }} />
                 </div>
                 <h4>Drag photos and videos here</h4>
                 <p>Support JPG, PNG, WEBP up to 10MB each</p>
@@ -198,7 +186,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
                           )
                         }
                       >
-                        <ChevronLeft size={18} />
+                        <FontAwesomeIcon icon={faChevronLeft} style={{ fontSize: 18 }} />
                       </button>
                       <button
                         className="carousel-btn next"
@@ -208,7 +196,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
                           )
                         }
                       >
-                        <ChevronRight size={18} />
+                        <FontAwesomeIcon icon={faChevronRight} style={{ fontSize: 18 }} />
                       </button>
                     </>
                   )}
@@ -249,7 +237,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
                           handleRemoveImage(idx);
                         }}
                       >
-                        <X size={12} />
+                        <FontAwesomeIcon icon={faXmark} style={{ fontSize: 12 }} />
                       </button>
                     </div>
                   ))}
@@ -296,7 +284,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
                   <div className="creator-meta">
                     <span className="creator-username">{user?.username}</span>
                     <div className="creator-privacy-badge">
-                      <Globe size={12} />
+                      <FontAwesomeIcon icon={faGlobe} style={{ fontSize: 12 }} />
                       <span>Public</span>
                     </div>
                   </div>
@@ -317,7 +305,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
                 </div>
 
                 <div className="details-field-row">
-                  <MapPin size={16} className="field-icon" />
+                  <FontAwesomeIcon icon={faLocationDot} style={{ fontSize: 16 }} className="field-icon" />
                   <input
                     type="text"
                     placeholder="Add location"
@@ -328,7 +316,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
                 </div>
 
                 <div className="details-field-row">
-                  <Hash size={16} className="field-icon" />
+                  <FontAwesomeIcon icon={faHashtag} style={{ fontSize: 16 }} className="field-icon" />
                   <input
                     type="text"
                     placeholder="Tags (comma separated)"
@@ -342,16 +330,16 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
                   <span className="add-to-post-label">Add to your post</span>
                   <div className="add-to-post-icons">
                     <button type="button" className="add-icon-btn photo-add" title="Add more photos" onClick={() => fileInputRef.current?.click()}>
-                      <ImageIcon size={20} />
+                      <FontAwesomeIcon icon={faImage} style={{ fontSize: 20 }} />
                     </button>
                     <button type="button" className="add-icon-btn tag-add" title="Tag people">
-                      <Tag size={20} />
+                      <FontAwesomeIcon icon={faTag} style={{ fontSize: 20 }} />
                     </button>
                     <button type="button" className="add-icon-btn feeling-add" title="Add feeling">
-                      <SmilePlus size={20} />
+                      <FontAwesomeIcon icon={faFaceSmile} style={{ fontSize: 20 }} />
                     </button>
                     <button type="button" className="add-icon-btn location-add" title="Add location">
-                      <MapPin size={20} />
+                      <FontAwesomeIcon icon={faLocationDot} style={{ fontSize: 20 }} />
                     </button>
                   </div>
                 </div>

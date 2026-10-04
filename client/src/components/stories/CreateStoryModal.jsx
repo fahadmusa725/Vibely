@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCamera, faXmark } from '@fortawesome/free-solid-svg-icons';
 import api from '../../services/api';
 import './CreateStoryModal.css';
 
@@ -48,7 +50,9 @@ const CreateStoryModal = ({ onClose, onStoryCreated }) => {
       <div className="create-story-content" onClick={(e) => e.stopPropagation()}>
         <div className="create-story-header">
           <h3>Create Story</h3>
-          <button className="close-btn" onClick={onClose}>✕</button>
+          <button className="close-btn" onClick={onClose}>
+            <FontAwesomeIcon icon={faXmark} style={{ fontSize: 18 }} />
+          </button>
         </div>
 
         {error && <div className="create-story-error">{error}</div>}
@@ -59,7 +63,8 @@ const CreateStoryModal = ({ onClose, onStoryCreated }) => {
               <img src={preview} alt="Story Preview" className="story-preview-img" />
             ) : (
               <div className="upload-placeholder">
-                <span>📸 Select an image for your 24h story</span>
+                <FontAwesomeIcon icon={faCamera} style={{ fontSize: 32 }} />
+                <span>Select an image for your 24h story</span>
               </div>
             )}
           </div>

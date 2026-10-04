@@ -1,14 +1,8 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import {
-  Home,
-  Compass,
-  Users,
-  Bookmark,
-  Bell,
-  User,
-  Settings,
-} from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCompass, faGear, faHouse, faUser, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faBell as farBell, faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import VerifiedBadge from './VerifiedBadge';
 import './LeftSidebar.css';
@@ -62,7 +56,7 @@ const LeftSidebar = ({ onOpenCreateModal }) => {
           end
           className={({ isActive }) => `ls-nav-item ${isActive ? 'active' : ''}`}
         >
-          <Home size={20} />
+          <FontAwesomeIcon icon={faHouse} style={{ fontSize: 20 }} />
           <span>Feed</span>
         </NavLink>
 
@@ -70,7 +64,7 @@ const LeftSidebar = ({ onOpenCreateModal }) => {
           to="/explore"
           className={({ isActive }) => `ls-nav-item ${isActive ? 'active' : ''}`}
         >
-          <Compass size={20} />
+          <FontAwesomeIcon icon={faCompass} style={{ fontSize: 20 }} />
           <span>Discover</span>
         </NavLink>
 
@@ -78,7 +72,7 @@ const LeftSidebar = ({ onOpenCreateModal }) => {
           to="/search"
           className={({ isActive }) => `ls-nav-item ${isActive ? 'active' : ''}`}
         >
-          <Users size={20} />
+          <FontAwesomeIcon icon={faUsers} style={{ fontSize: 20 }} />
           <span>People</span>
         </NavLink>
 
@@ -86,7 +80,7 @@ const LeftSidebar = ({ onOpenCreateModal }) => {
           to="/saved"
           className={({ isActive }) => `ls-nav-item ${isActive ? 'active' : ''}`}
         >
-          <Bookmark size={20} />
+          <FontAwesomeIcon icon={farBookmark} style={{ fontSize: 20 }} />
           <span>Saved</span>
         </NavLink>
 
@@ -94,7 +88,7 @@ const LeftSidebar = ({ onOpenCreateModal }) => {
           to="/notifications"
           className={({ isActive }) => `ls-nav-item ${isActive ? 'active' : ''}`}
         >
-          <Bell size={20} />
+          <FontAwesomeIcon icon={farBell} style={{ fontSize: 20 }} />
           <span>Notifications</span>
         </NavLink>
 
@@ -103,7 +97,7 @@ const LeftSidebar = ({ onOpenCreateModal }) => {
             to={`/profile/${user.username}`}
             className={({ isActive }) => `ls-nav-item ${isActive ? 'active' : ''}`}
           >
-            <User size={20} />
+            <FontAwesomeIcon icon={faUser} style={{ fontSize: 20 }} />
             <span>Profile</span>
           </NavLink>
         )}
@@ -113,7 +107,7 @@ const LeftSidebar = ({ onOpenCreateModal }) => {
             className="ls-nav-item ls-action-btn"
             onClick={() => navigate('/settings')}
           >
-            <Settings size={20} />
+            <FontAwesomeIcon icon={faGear} style={{ fontSize: 20 }} />
             <span>Settings</span>
           </button>
         )}

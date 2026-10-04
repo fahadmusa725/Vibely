@@ -1,18 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  X,
-  Heart,
-  MessageCircle,
-  Send,
-  Bookmark,
-  ChevronLeft,
-  ChevronRight,
-  Trash2,
-  MapPin,
-  Pin,
-  CornerDownRight,
-  Edit3,
-} from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBookmark, faChevronLeft, faChevronRight, faHeart, faLocationDot, faPaperPlane, faPen, faReply, faThumbtack, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faBookmark as farBookmark, faComment as farComment, faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import VerifiedBadge from './VerifiedBadge';
@@ -257,7 +246,7 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
 
     return (
       <div className={`comment-item ${isReply ? 'comment-reply' : ''} ${comment.isPinned ? 'comment-pinned' : ''}`}>
-        {isReply && <CornerDownRight size={13} className="reply-arrow" />}
+        {isReply && <FontAwesomeIcon icon={faReply} style={{ fontSize: 13 }} className="reply-arrow" />}
         <img
           src={comment.author?.avatar}
           alt={comment.author?.username}
@@ -266,7 +255,7 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
         <div className="comment-body">
           {comment.isPinned && (
             <div className="pinned-badge">
-              <Pin size={10} /> Pinned
+              <FontAwesomeIcon icon={faThumbtack} style={{ fontSize: 10 }} /> Pinned
             </div>
           )}
           <p>
@@ -293,7 +282,7 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
                 className={`comment-action-btn ${comment.isPinned ? 'comment-unpin' : ''}`}
                 onClick={() => handlePinComment(comment._id)}
               >
-                <Pin size={11} />
+                <FontAwesomeIcon icon={faThumbtack} style={{ fontSize: 11 }} />
                 {comment.isPinned ? 'Unpin' : 'Pin'}
               </button>
             )}
@@ -303,7 +292,7 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
                 onClick={() => handleDeleteComment(comment._id, parentId)}
                 title="Delete comment"
               >
-                <Trash2 size={11} />
+                <FontAwesomeIcon icon={faTrash} style={{ fontSize: 11 }} />
               </button>
             )}
           </div>
@@ -336,7 +325,7 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
                     )
                   }
                 >
-                  <ChevronLeft size={18} />
+                  <FontAwesomeIcon icon={faChevronLeft} style={{ fontSize: 18 }} />
                 </button>
                 <button
                   className="carousel-btn next"
@@ -346,14 +335,14 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
                     )
                   }
                 >
-                  <ChevronRight size={18} />
+                  <FontAwesomeIcon icon={faChevronRight} style={{ fontSize: 18 }} />
                 </button>
               </>
             )}
 
             {likeAnimating && (
               <div className="heart-pulse-overlay">
-                <Heart size={96} fill="#ed4956" color="#ed4956" className="animated-heart" />
+                <FontAwesomeIcon icon={faHeart} style={{ fontSize: 96, color: '#ed4956' }} className="animated-heart" />
               </div>
             )}
           </div>
@@ -377,7 +366,7 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
                   </div>
                   {post.location && (
                     <span className="detail-location">
-                      <MapPin size={10} /> {post.location}
+                      <FontAwesomeIcon icon={faLocationDot} style={{ fontSize: 10 }} /> {post.location}
                     </span>
                   )}
                 </div>
@@ -385,11 +374,11 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
               <div className="detail-header-actions">
                 {isPostOwner && (
                   <button className="icon-btn-ghost" onClick={openEditModal} title="Edit post">
-                    <Edit3 size={16} />
+                    <FontAwesomeIcon icon={faPen} style={{ fontSize: 16 }} />
                   </button>
                 )}
                 <button className="icon-btn-ghost" onClick={onClose} title="Close modal">
-                  <X size={18} />
+                  <FontAwesomeIcon icon={faXmark} style={{ fontSize: 18 }} />
                 </button>
               </div>
             </div>
@@ -456,19 +445,15 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
                     onClick={handleLikeToggle}
                     aria-label="Like"
                   >
-                    <Heart
-                      size={24}
-                      fill={isLiked ? '#ed4956' : 'none'}
-                      color={isLiked ? '#ed4956' : 'currentColor'}
-                    />
+                    <FontAwesomeIcon icon={isLiked ? faHeart : farHeart} style={{ fontSize: 24, color: isLiked ? '#ed4956' : 'currentColor' }} />
                   </button>
 
                   <button className="action-btn-icon" aria-label="Comment">
-                    <MessageCircle size={24} color="currentColor" />
+                    <FontAwesomeIcon icon={farComment} style={{ fontSize: 24 }} />
                   </button>
 
                   <button className="action-btn-icon" aria-label="Share">
-                    <Send size={22} color="currentColor" />
+                    <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: 22 }} />
                   </button>
                 </div>
 
@@ -477,11 +462,7 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
                   onClick={handleSaveToggle}
                   aria-label="Save post"
                 >
-                  <Bookmark
-                    size={24}
-                    fill={isSaved ? 'currentColor' : 'none'}
-                    color="currentColor"
-                  />
+                  <FontAwesomeIcon icon={isSaved ? faBookmark : farBookmark} style={{ fontSize: 24 }} />
                 </button>
               </div>
 
@@ -495,7 +476,7 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
               <form className="detail-comment-form sticky-comment-form" onSubmit={handleAddComment}>
                 {replyingTo && (
                   <div className="reply-indicator">
-                    <CornerDownRight size={12} />
+                    <FontAwesomeIcon icon={faReply} style={{ fontSize: 12 }} />
                     <span>Replying to <strong>@{replyingTo.username}</strong></span>
                     <button type="button" className="cancel-reply-btn" onClick={cancelReply}>×</button>
                   </div>
@@ -535,7 +516,7 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
             <div className="edit-post-header">
               <h2>Edit Post</h2>
               <button className="icon-btn-ghost" onClick={() => setShowEditModal(false)}>
-                <X size={18} />
+                <FontAwesomeIcon icon={faXmark} style={{ fontSize: 18 }} />
               </button>
             </div>
 

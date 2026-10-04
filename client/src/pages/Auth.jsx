@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Sparkles, Mail, Lock, User, AlertCircle, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight, faCircleExclamation, faEnvelope, faEye, faEyeSlash, faLock, faUser, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import './Auth.css';
 
@@ -64,7 +65,7 @@ const Auth = ({ mode = 'login' }) => {
       <div className="auth-card card">
         <div className="auth-brand-header">
           <div className="auth-logo-badge">
-            <Sparkles size={26} />
+            <FontAwesomeIcon icon={faWandMagicSparkles} style={{ fontSize: 26 }} />
           </div>
           <h1>Vibely</h1>
           <p>
@@ -76,7 +77,7 @@ const Auth = ({ mode = 'login' }) => {
 
         {error && (
           <div className="auth-error-banner">
-            <AlertCircle size={18} />
+            <FontAwesomeIcon icon={faCircleExclamation} style={{ fontSize: 18 }} />
             <span>{error}</span>
           </div>
         )}
@@ -87,7 +88,7 @@ const Auth = ({ mode = 'login' }) => {
               <div className="auth-input-group">
                 <label>Email or Username</label>
                 <div className="auth-input-wrapper">
-                  <User size={18} className="auth-input-icon" />
+                  <FontAwesomeIcon icon={faUser} style={{ fontSize: 18 }} className="auth-input-icon" />
                   <input
                     type="text"
                     name="loginId"
@@ -107,7 +108,7 @@ const Auth = ({ mode = 'login' }) => {
                   </Link>
                 </div>
                 <div className="auth-input-wrapper">
-                  <Lock size={18} className="auth-input-icon" />
+                  <FontAwesomeIcon icon={faLock} style={{ fontSize: 18 }} className="auth-input-icon" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     name="password"
@@ -122,7 +123,7 @@ const Auth = ({ mode = 'login' }) => {
                     onClick={() => setShowPassword((p) => !p)}
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
-                    {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                    {showPassword ? <FontAwesomeIcon icon={faEyeSlash} style={{ fontSize: 17 }} /> : <FontAwesomeIcon icon={faEye} style={{ fontSize: 17 }} />}
                   </button>
                 </div>
               </div>
@@ -132,7 +133,7 @@ const Auth = ({ mode = 'login' }) => {
               <div className="auth-input-group">
                 <label>Full Name</label>
                 <div className="auth-input-wrapper">
-                  <User size={18} className="auth-input-icon" />
+                  <FontAwesomeIcon icon={faUser} style={{ fontSize: 18 }} className="auth-input-icon" />
                   <input
                     type="text"
                     name="fullName"
@@ -162,7 +163,7 @@ const Auth = ({ mode = 'login' }) => {
               <div className="auth-input-group">
                 <label>Email</label>
                 <div className="auth-input-wrapper">
-                  <Mail size={18} className="auth-input-icon" />
+                  <FontAwesomeIcon icon={faEnvelope} style={{ fontSize: 18 }} className="auth-input-icon" />
                   <input
                     type="email"
                     name="email"
@@ -177,7 +178,7 @@ const Auth = ({ mode = 'login' }) => {
               <div className="auth-input-group">
                 <label>Password</label>
                 <div className="auth-input-wrapper">
-                  <Lock size={18} className="auth-input-icon" />
+                  <FontAwesomeIcon icon={faLock} style={{ fontSize: 18 }} className="auth-input-icon" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     name="password"
@@ -193,7 +194,7 @@ const Auth = ({ mode = 'login' }) => {
                     onClick={() => setShowPassword((p) => !p)}
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
-                    {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                    {showPassword ? <FontAwesomeIcon icon={faEyeSlash} style={{ fontSize: 17 }} /> : <FontAwesomeIcon icon={faEye} style={{ fontSize: 17 }} />}
                   </button>
                 </div>
               </div>
@@ -206,7 +207,7 @@ const Auth = ({ mode = 'login' }) => {
             disabled={loading}
           >
             <span>{loading ? 'Please wait...' : isLogin ? 'Sign In' : 'Create Account'}</span>
-            <ArrowRight size={18} />
+            <FontAwesomeIcon icon={faArrowRight} style={{ fontSize: 18 }} />
           </button>
         </form>
 

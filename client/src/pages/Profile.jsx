@@ -1,21 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  Grid,
-  MapPin,
-  Link as LinkIcon,
-  Calendar,
-  Camera,
-  Edit3,
-  Layers,
-  Heart,
-  MessageCircle,
-  Settings,
-} from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCamera, faComment, faHeart, faLayerGroup, faLink, faLocationDot, faPen, faTableCellsLarge } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import PostDetailModal from '../components/PostDetailModal';
 import VerifiedBadge from '../components/VerifiedBadge';
 import api from '../services/api';
+import { getAvatarUrl } from '../utils/avatar';
 import './Profile.css';
 
 const Profile = () => {
@@ -254,7 +245,7 @@ const Profile = () => {
             className="change-cover-btn"
             onClick={() => coverInputRef.current?.click()}
           >
-            <Camera size={14} />
+            <FontAwesomeIcon icon={faCamera} style={{ fontSize: 14 }} />
             <span>Edit Cover</span>
           </button>
         )}
@@ -283,7 +274,7 @@ const Profile = () => {
                 onClick={() => avatarInputRef.current?.click()}
                 title="Change Avatar"
               >
-                <Camera size={14} />
+                <FontAwesomeIcon icon={faCamera} style={{ fontSize: 14 }} />
               </button>
             )}
             <input
@@ -301,7 +292,7 @@ const Profile = () => {
                 className="btn btn-secondary edit-btn"
                 onClick={() => setShowEditModal(true)}
               >
-                <Edit3 size={15} />
+                <FontAwesomeIcon icon={faPen} style={{ fontSize: 15 }} />
                 <span>Edit Profile</span>
               </button>
             ) : (
@@ -327,7 +318,7 @@ const Profile = () => {
           <div className="profile-meta-tags">
             {profileUser.location && (
               <div className="meta-tag">
-                <MapPin size={13} />
+                <FontAwesomeIcon icon={faLocationDot} style={{ fontSize: 13 }} />
                 <span>{profileUser.location}</span>
               </div>
             )}
@@ -338,7 +329,7 @@ const Profile = () => {
                 rel="noreferrer"
                 className="meta-tag link-tag"
               >
-                <LinkIcon size={13} />
+                <FontAwesomeIcon icon={faLink} style={{ fontSize: 13 }} />
                 <span>{profileUser.website.replace(/^https?:\/\//, '')}</span>
               </a>
             )}
@@ -369,7 +360,7 @@ const Profile = () => {
 
       <div className="profile-posts-section">
         <div className="section-tab active">
-          <Grid size={16} />
+          <FontAwesomeIcon icon={faTableCellsLarge} style={{ fontSize: 16 }} />
           <span>POSTS</span>
         </div>
 
@@ -389,17 +380,17 @@ const Profile = () => {
 
                 {post.images && post.images.length > 1 && (
                   <div className="carousel-indicator">
-                    <Layers size={14} />
+                    <FontAwesomeIcon icon={faLayerGroup} style={{ fontSize: 14 }} />
                   </div>
                 )}
 
                 <div className="post-grid-overlay">
                   <div className="overlay-stat">
-                    <Heart size={18} fill="#ffffff" color="#ffffff" />
+                    <FontAwesomeIcon icon={faHeart} style={{ fontSize: 18, color: '#ffffff' }} />
                     <span>{post.likesCount || post.likes?.length || 0}</span>
                   </div>
                   <div className="overlay-stat">
-                    <MessageCircle size={18} fill="#ffffff" color="#ffffff" />
+                    <FontAwesomeIcon icon={faComment} style={{ fontSize: 18, color: '#ffffff' }} />
                     <span>{post.commentsCount || 0}</span>
                   </div>
                 </div>
@@ -408,7 +399,7 @@ const Profile = () => {
           </div>
         ) : (
           <div className="card profile-empty-posts">
-            <Grid size={36} className="empty-icon" />
+            <FontAwesomeIcon icon={faTableCellsLarge} style={{ fontSize: 36 }} className="empty-icon" />
             <h3>No Posts Yet</h3>
           </div>
         )}
@@ -450,7 +441,7 @@ const Profile = () => {
                           }}
                         >
                           <img
-                            src={u.avatar || 'https://via.placeholder.com/150'}
+                            src={getAvatarUrl(u.avatar, u.fullName)}
                             alt={u.username}
                             className="follow-user-avatar"
                           />

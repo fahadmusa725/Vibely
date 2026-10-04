@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, X, TrendingUp, Circle } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowTrendUp, faCircle, faUsers, faXmark } from '@fortawesome/free-solid-svg-icons';
 import VerifiedBadge from './VerifiedBadge';
 import api from '../services/api';
 import './RightSidebar.css';
@@ -60,7 +61,7 @@ const RightSidebar = ({ suggestedUsers = [], onFollowUser }) => {
       <div className="rs-card card">
         <div className="rs-card-header">
           <div className="rs-card-title">
-            <Users size={18} className="rs-title-icon" />
+            <FontAwesomeIcon icon={faUsers} style={{ fontSize: 18 }} className="rs-title-icon" />
             <h3>Who to Follow</h3>
           </div>
           <button className="rs-see-all-btn" onClick={() => navigate('/search')}>
@@ -115,7 +116,7 @@ const RightSidebar = ({ suggestedUsers = [], onFollowUser }) => {
                       title="Dismiss"
                       aria-label="Dismiss suggestion"
                     >
-                      <X size={15} />
+                      <FontAwesomeIcon icon={faXmark} style={{ fontSize: 15 }} />
                     </button>
                   </div>
                 </div>
@@ -132,7 +133,7 @@ const RightSidebar = ({ suggestedUsers = [], onFollowUser }) => {
       <div className="rs-card card">
         <div className="rs-card-header">
           <div className="rs-card-title">
-            <TrendingUp size={18} className="rs-title-icon" />
+            <FontAwesomeIcon icon={faArrowTrendUp} style={{ fontSize: 18 }} className="rs-title-icon" />
             <h3>Trending Now</h3>
           </div>
         </div>
@@ -163,7 +164,7 @@ const RightSidebar = ({ suggestedUsers = [], onFollowUser }) => {
       <div className="rs-card card">
         <div className="rs-card-header">
           <div className="rs-card-title">
-            <Circle size={18} className="rs-title-icon" style={{ fill: 'var(--success)', color: 'var(--success)' }} />
+            <FontAwesomeIcon icon={faCircle} className="rs-title-icon" style={{ fontSize: 18, color: 'var(--success)' }} />
             <h3>Contacts</h3>
           </div>
         </div>

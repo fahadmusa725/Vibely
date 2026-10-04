@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Sparkles, Mail, AlertCircle, ArrowLeft, CheckCircle2, AlertTriangle } from 'lucide-react';
 import emailjs from '@emailjs/browser';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faCircleCheck, faCircleExclamation, faEnvelope, faTriangleExclamation, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
 import api from '../services/api';
 import './Auth.css';
 import './ForgotPassword.css';
@@ -69,7 +70,7 @@ const ForgotPassword = () => {
       <div className="auth-card card">
         <div className="auth-brand-header">
           <div className="auth-logo-badge">
-            <Sparkles size={26} />
+            <FontAwesomeIcon icon={faWandMagicSparkles} style={{ fontSize: 26 }} />
           </div>
           <h1>Vibely</h1>
           <p>Reset your password</p>
@@ -83,7 +84,7 @@ const ForgotPassword = () => {
 
             {error && (
               <div className="auth-error-banner">
-                <AlertCircle size={18} />
+                <FontAwesomeIcon icon={faCircleExclamation} style={{ fontSize: 18 }} />
                 <span>{error}</span>
               </div>
             )}
@@ -92,7 +93,7 @@ const ForgotPassword = () => {
               <div className="auth-input-group">
                 <label>Email Address</label>
                 <div className="auth-input-wrapper">
-                  <Mail size={18} className="auth-input-icon" />
+                  <FontAwesomeIcon icon={faEnvelope} style={{ fontSize: 18 }} className="auth-input-icon" />
                   <input
                     type="email"
                     name="email"
@@ -119,7 +120,7 @@ const ForgotPassword = () => {
         ) : (
           <div className="fp-success-state">
             <div className="fp-success-icon">
-              <CheckCircle2 size={48} />
+              <FontAwesomeIcon icon={faCircleCheck} style={{ fontSize: 48 }} />
             </div>
             <h2>Check your inbox</h2>
             <p>
@@ -130,7 +131,7 @@ const ForgotPassword = () => {
 
             {emailWarning && (
               <div className="fp-email-warning">
-                <AlertTriangle size={16} />
+                <FontAwesomeIcon icon={faTriangleExclamation} style={{ fontSize: 16 }} />
                 <span>{emailWarning}</span>
               </div>
             )}
@@ -147,7 +148,7 @@ const ForgotPassword = () => {
         <div className="auth-footer-toggle">
           <p>
             <Link to="/login" className="auth-link fp-back-link">
-              <ArrowLeft size={14} /> Back to Login
+              <FontAwesomeIcon icon={faArrowLeft} style={{ fontSize: 14 }} /> Back to Login
             </Link>
           </p>
         </div>

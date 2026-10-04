@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Compass, Plus, Search, User } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCompass, faHouse, faMagnifyingGlass, faPlus, faUser } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import './MobileNav.css';
 
@@ -15,7 +16,7 @@ const MobileNav = ({ onOpenCreateModal }) => {
         end
         title="Feed"
       >
-        <Home size={22} />
+        <FontAwesomeIcon icon={faHouse} style={{ fontSize: 22 }} />
       </NavLink>
 
       <NavLink
@@ -23,7 +24,7 @@ const MobileNav = ({ onOpenCreateModal }) => {
         className={({ isActive }) => `mob-nav-item ${isActive ? 'active' : ''}`}
         title="Discover"
       >
-        <Compass size={22} />
+        <FontAwesomeIcon icon={faCompass} style={{ fontSize: 22 }} />
       </NavLink>
 
       <button
@@ -32,7 +33,7 @@ const MobileNav = ({ onOpenCreateModal }) => {
         title="Create Post"
       >
         <div className="plus-btn-inner">
-          <Plus size={22} strokeWidth={2.5} />
+          <FontAwesomeIcon icon={faPlus} style={{ fontSize: 22 }} />
         </div>
       </button>
 
@@ -41,7 +42,7 @@ const MobileNav = ({ onOpenCreateModal }) => {
         className={({ isActive }) => `mob-nav-item ${isActive ? 'active' : ''}`}
         title="Search"
       >
-        <Search size={22} />
+        <FontAwesomeIcon icon={faMagnifyingGlass} style={{ fontSize: 22 }} />
       </NavLink>
 
       <NavLink
@@ -56,7 +57,7 @@ const MobileNav = ({ onOpenCreateModal }) => {
             className="mob-avatar"
           />
         ) : (
-          <User size={22} />
+          <FontAwesomeIcon icon={faUser} style={{ fontSize: 22 }} />
         )}
       </NavLink>
     </nav>

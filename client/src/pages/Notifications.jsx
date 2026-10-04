@@ -1,17 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Bell,
-  Heart,
-  UserPlus,
-  MessageSquare,
-  Repeat,
-  Trophy,
-  CheckCheck,
-  Lock,
-  ArrowLeft,
-  Sparkles,
-} from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faCheckDouble, faHeart, faLock, faRepeat, faTrophy, faUserPlus, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
+import { faBell as farBell, faMessage as farMessage } from '@fortawesome/free-regular-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import VerifiedBadge from '../components/VerifiedBadge';
 import './Notifications.css';
@@ -108,7 +99,7 @@ const Notifications = () => {
       <div className="notif-auth-gate">
         <div className="auth-gate-inner card">
           <div className="auth-gate-icon">
-            <Lock size={36} />
+            <FontAwesomeIcon icon={faLock} style={{ fontSize: 36 }} />
           </div>
           <h2>Sign in to view your notifications</h2>
           <p>Stay updated when people like, comment, or follow your profile.</p>
@@ -123,17 +114,17 @@ const Notifications = () => {
   const renderIcon = (type) => {
     switch (type) {
       case 'like':
-        return <div className="notif-badge-icon like"><Heart size={12} fill="#fff" /></div>;
+        return <div className="notif-badge-icon like"><FontAwesomeIcon icon={faHeart} style={{ fontSize: 12, color: '#fff' }} /></div>;
       case 'follow':
-        return <div className="notif-badge-icon follow"><UserPlus size={12} /></div>;
+        return <div className="notif-badge-icon follow"><FontAwesomeIcon icon={faUserPlus} style={{ fontSize: 12 }} /></div>;
       case 'comment':
-        return <div className="notif-badge-icon comment"><MessageSquare size={12} /></div>;
+        return <div className="notif-badge-icon comment"><FontAwesomeIcon icon={farMessage} style={{ fontSize: 12 }} /></div>;
       case 'repost':
-        return <div className="notif-badge-icon repost"><Repeat size={12} /></div>;
+        return <div className="notif-badge-icon repost"><FontAwesomeIcon icon={faRepeat} style={{ fontSize: 12 }} /></div>;
       case 'milestone':
-        return <div className="notif-badge-icon milestone"><Trophy size={12} /></div>;
+        return <div className="notif-badge-icon milestone"><FontAwesomeIcon icon={faTrophy} style={{ fontSize: 12 }} /></div>;
       default:
-        return <div className="notif-badge-icon default"><Bell size={12} /></div>;
+        return <div className="notif-badge-icon default"><FontAwesomeIcon icon={farBell} style={{ fontSize: 12 }} /></div>;
     }
   };
 
@@ -143,7 +134,7 @@ const Notifications = () => {
         <div className="notif-header-top">
           <div className="notif-title-wrap">
             <button className="notif-back-btn" onClick={() => navigate(-1)}>
-              <ArrowLeft size={18} />
+              <FontAwesomeIcon icon={faArrowLeft} style={{ fontSize: 18 }} />
             </button>
             <h1 className="notif-title">Notifications</h1>
           </div>
@@ -152,7 +143,7 @@ const Notifications = () => {
             onClick={markAllAsRead}
             title="Mark all as read"
           >
-            <CheckCheck size={18} />
+            <FontAwesomeIcon icon={faCheckDouble} style={{ fontSize: 18 }} />
           </button>
         </div>
 
@@ -203,7 +194,7 @@ const Notifications = () => {
                     />
                   ) : (
                     <div className="notif-avatar-placeholder">
-                      <Sparkles size={18} />
+                      <FontAwesomeIcon icon={faWandMagicSparkles} style={{ fontSize: 18 }} />
                     </div>
                   )}
                   {renderIcon(n.type)}
@@ -255,14 +246,14 @@ const Notifications = () => {
           ))
         ) : (
           <div className="notif-empty">
-            <Bell size={36} strokeWidth={1.5} />
+            <FontAwesomeIcon icon={farBell} style={{ fontSize: 36 }} />
             <p>No notifications in this tab</p>
           </div>
         )}
 
         <div className="notif-caught-up">
           <div className="caught-up-circle">
-            <CheckCheck size={18} />
+            <FontAwesomeIcon icon={faCheckDouble} style={{ fontSize: 18 }} />
           </div>
           <span className="caught-up-title">You're all caught up</span>
           <span className="caught-up-sub">No new notifications from the last 7 days</span>

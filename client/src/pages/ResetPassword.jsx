@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { Sparkles, Lock, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleCheck, faCircleExclamation, faEye, faEyeSlash, faLock, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import './Auth.css';
@@ -54,7 +55,7 @@ const ResetPassword = () => {
       <div className="auth-container">
         <div className="auth-card card">
           <div className="auth-error-banner">
-            <AlertCircle size={18} />
+            <FontAwesomeIcon icon={faCircleExclamation} style={{ fontSize: 18 }} />
             <span>Invalid reset link. Please request a new password reset.</span>
           </div>
           <div className="auth-footer-toggle">
@@ -70,7 +71,7 @@ const ResetPassword = () => {
       <div className="auth-card card">
         <div className="auth-brand-header">
           <div className="auth-logo-badge">
-            <Sparkles size={26} />
+            <FontAwesomeIcon icon={faWandMagicSparkles} style={{ fontSize: 26 }} />
           </div>
           <h1>Vibely</h1>
           <p>Set a new password</p>
@@ -80,7 +81,7 @@ const ResetPassword = () => {
           <>
             {error && (
               <div className="auth-error-banner">
-                <AlertCircle size={18} />
+                <FontAwesomeIcon icon={faCircleExclamation} style={{ fontSize: 18 }} />
                 <span>{error}</span>
               </div>
             )}
@@ -89,7 +90,7 @@ const ResetPassword = () => {
               <div className="auth-input-group">
                 <label>New Password</label>
                 <div className="auth-input-wrapper">
-                  <Lock size={18} className="auth-input-icon" />
+                  <FontAwesomeIcon icon={faLock} style={{ fontSize: 18 }} className="auth-input-icon" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     name="password"
@@ -105,7 +106,7 @@ const ResetPassword = () => {
                     onClick={() => setShowPassword((p) => !p)}
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
-                    {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                    {showPassword ? <FontAwesomeIcon icon={faEyeSlash} style={{ fontSize: 17 }} /> : <FontAwesomeIcon icon={faEye} style={{ fontSize: 17 }} />}
                   </button>
                 </div>
               </div>
@@ -113,7 +114,7 @@ const ResetPassword = () => {
               <div className="auth-input-group">
                 <label>Confirm New Password</label>
                 <div className="auth-input-wrapper">
-                  <Lock size={18} className="auth-input-icon" />
+                  <FontAwesomeIcon icon={faLock} style={{ fontSize: 18 }} className="auth-input-icon" />
                   <input
                     type={showConfirm ? 'text' : 'password'}
                     name="confirmPassword"
@@ -128,7 +129,7 @@ const ResetPassword = () => {
                     onClick={() => setShowConfirm((p) => !p)}
                     aria-label={showConfirm ? 'Hide password' : 'Show password'}
                   >
-                    {showConfirm ? <EyeOff size={17} /> : <Eye size={17} />}
+                    {showConfirm ? <FontAwesomeIcon icon={faEyeSlash} style={{ fontSize: 17 }} /> : <FontAwesomeIcon icon={faEye} style={{ fontSize: 17 }} />}
                   </button>
                 </div>
               </div>
@@ -168,7 +169,7 @@ const ResetPassword = () => {
         ) : (
           <div className="fp-success-state">
             <div className="fp-success-icon">
-              <CheckCircle2 size={48} />
+              <FontAwesomeIcon icon={faCircleCheck} style={{ fontSize: 48 }} />
             </div>
             <h2>Password Reset!</h2>
             <p>Your password has been changed successfully. Redirecting you to the home page…</p>

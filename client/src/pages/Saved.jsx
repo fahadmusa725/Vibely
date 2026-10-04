@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bookmark, Lock, ArrowLeft } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faLock } from '@fortawesome/free-solid-svg-icons';
+import { faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import PostCard from '../components/PostCard';
 import PostDetailModal from '../components/PostDetailModal';
@@ -46,7 +48,7 @@ const Saved = () => {
       <div className="saved-auth-gate">
         <div className="auth-gate-inner">
           <div className="auth-gate-icon">
-            <Lock size={36} />
+            <FontAwesomeIcon icon={faLock} style={{ fontSize: 36 }} />
           </div>
           <h2>Sign in to see your saved posts</h2>
           <p>Your bookmarked posts will appear here after you sign in.</p>
@@ -62,10 +64,10 @@ const Saved = () => {
     <div className="saved-page">
       <div className="saved-header">
         <button className="saved-back-btn" onClick={() => navigate(-1)}>
-          <ArrowLeft size={20} />
+          <FontAwesomeIcon icon={faArrowLeft} style={{ fontSize: 20 }} />
         </button>
         <div className="saved-title-wrap">
-          <Bookmark size={22} className="saved-title-icon" />
+          <FontAwesomeIcon icon={farBookmark} style={{ fontSize: 22 }} className="saved-title-icon" />
           <div>
             <h1 className="saved-title">Saved Posts</h1>
             <p className="saved-subtitle">Only you can see what you've saved</p>
@@ -102,7 +104,7 @@ const Saved = () => {
       ) : (
         <div className="saved-empty card">
           <div className="saved-empty-icon">
-            <Bookmark size={40} strokeWidth={1.5} />
+            <FontAwesomeIcon icon={farBookmark} style={{ fontSize: 40 }} />
           </div>
           <h3>No saved posts yet</h3>
           <p>
