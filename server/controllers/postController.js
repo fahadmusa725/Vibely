@@ -251,12 +251,16 @@ exports.getPostById = async (req, res) => {
     const isLiked = currentUserId
       ? post.likes.some((likeId) => likeId.toString() === currentUserId)
       : false;
+    const isSaved = req.user
+      ? (req.user.savedPosts || []).some((id) => id.toString() === post._id.toString())
+      : false;
 
     return res.status(200).json({
       success: true,
       data: {
         ...post.toObject(),
         isLiked,
+        isSaved,
         likesCount: post.likes.length,
         comments,
       },

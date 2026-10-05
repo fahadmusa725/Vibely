@@ -15,9 +15,21 @@ exports.getUserProfile = async (req, res) => {
       });
     }
 
-    const posts = await Post.find({ author: user._id })
-      .sort({ createdAt: -1 })
-      .populate('author', 'username fullName avatar isVerified');
+    const currentUserId = req.user ? req.user._id.toString() : null;
+    const savedPostIds = req.user ? (req.user.savedPosts || []).map((id) => id.toString()) : [];
+    const posts = (
+      await Post.find({ author: user._id })
+        .sort({ createdAt: -1 })
+        .populate('author', 'username fullName avatar isVerified')
+        .lean()
+    ).map((post) => ({
+      ...post,
+      isLiked: currentUserId
+        ? post.likes.some((likeId) => likeId.toString() === currentUserId)
+        : false,
+      isSaved: savedPostIds.includes(post._id.toString()),
+      likesCount: post.likes ? post.likes.length : 0,
+    }));
 
     let isFollowing = false;
     if (req.user) {

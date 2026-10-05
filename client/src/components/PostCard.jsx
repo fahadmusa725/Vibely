@@ -56,8 +56,11 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
   const images = post.images && post.images.length > 0 ? post.images : [];
 
   useEffect(() => {
+    setPost(initialPost);
+    setIsLiked(initialPost.isLiked || false);
+    setLikesCount(initialPost.likesCount || 0);
     setIsSaved(initialPost.isSaved || false);
-  }, [initialPost.isSaved]);
+  }, [initialPost]);
 
   useEffect(() => {
     if (!showOptions) return;
@@ -82,19 +85,16 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
 
   const handleImageDoubleTap = (e) => {
     e.stopPropagation();
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    if (!isLiked) {
+      handleLikeToggle();
+      return;
+    }
     setLikeAnimating(true);
     setTimeout(() => setLikeAnimating(false), 800);
-
-    if (!isLiked) {
-      setIsLiked(true);
-      setLikesCount((prev) => prev + 1);
-      if (isAuthenticated) {
-        api.post(`/posts/${post._id}/like`).catch(() => {
-          setIsLiked(false);
-          setLikesCount((prev) => Math.max(0, prev - 1));
-        });
-      }
-    }
   };
 
   const handleLikeToggle = async (e) => {
@@ -105,6 +105,7 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
     }
 
     const nextState = !isLiked;
+    const nextCount = nextState ? likesCount + 1 : Math.max(0, likesCount - 1);
     setIsLiked(nextState);
     setLikesCount((prev) => (nextState ? prev + 1 : Math.max(0, prev - 1)));
     if (nextState) {
@@ -114,6 +115,7 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
 
     try {
       await api.post(`/posts/${post._id}/like`);
+      if (onPostUpdated) onPostUpdated({ ...post, isLiked: nextState, likesCount: nextCount, isSaved });
     } catch (error) {
       setIsLiked(!nextState);
       setLikesCount((prev) => (nextState ? Math.max(0, prev - 1) : prev + 1));
@@ -135,6 +137,7 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
       const res = await api.post(`/posts/${post._id}/save`);
       if (res.data.success) {
         setIsSaved(res.data.isSaved);
+        if (onPostUpdated) onPostUpdated({ ...post, isLiked, likesCount, isSaved: res.data.isSaved });
       }
     } catch (error) {
       console.error('Save toggle error:', error);
@@ -153,6 +156,14 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
       } catch (err) {
         alert(err.response?.data?.message || 'Failed to delete post');
       }
+    }
+  };
+
+  const openPostModal = () => {
+    if (onOpenPostModal) {
+      onOpenPostModal({ ...post, isLiked, likesCount, isSaved });
+    } else {
+      navigate(`/post/${post._id}`);
     }
   };
 
@@ -336,7 +347,7 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
 
           <div
             className="stats-comments-right"
-            onClick={() => onOpenPostModal ? onOpenPostModal(post) : navigate(`/post/${post._id}`)}
+            onClick={openPostModal}
           >
             <span>{commentsCount} {commentsCount === 1 ? 'comment' : 'comments'}</span>
           </div>
@@ -355,7 +366,7 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
 
           <button
             className="post-footer-btn"
-            onClick={() => onOpenPostModal ? onOpenPostModal(post) : navigate(`/post/${post._id}`)}
+            onClick={openPostModal}
           >
             <FontAwesomeIcon icon={farComment} style={{ fontSize: 18 }} />
             <span>Comment</span>

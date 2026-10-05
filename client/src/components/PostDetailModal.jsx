@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookmark, faChevronLeft, faChevronRight, faHeart, faLocationDot, faPaperPlane, faPen, faReply, faThumbtack, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faBookmark, faCheck, faChevronLeft, faChevronRight, faHeart, faLocationDot, faPaperPlane, faPen, faReply, faThumbtack, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faBookmark as farBookmark, faComment as farComment, faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -41,8 +41,9 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
   const [submittingComment, setSubmittingComment] = useState(false);
   const [isLiked, setIsLiked] = useState(initialPost?.isLiked || false);
   const [likesCount, setLikesCount] = useState(initialPost?.likesCount || 0);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(initialPost?.isSaved || false);
   const [likeAnimating, setLikeAnimating] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   const [replyingTo, setReplyingTo] = useState(null);
   const commentInputRef = useRef(null);
@@ -61,11 +62,21 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
       setPost(initialPost);
       setIsLiked(initialPost.isLiked || false);
       setLikesCount(initialPost.likesCount || 0);
+      setIsSaved(initialPost.isSaved || false);
       fetchComments(initialPost._id);
     }
   }, [initialPost, isOpen]);
 
   if (!isOpen || !post) return null;
+
+  const reportChange = (changes) => {
+    if (onPostUpdated) onPostUpdated({ ...post, isLiked, likesCount, isSaved, ...changes });
+  };
+
+  const updateCommentsCount = (commentsCount) => {
+    setPost((prev) => ({ ...prev, commentsCount }));
+    reportChange({ commentsCount });
+  };
 
   const images = post.images && post.images.length > 0 ? post.images : [{ url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1080' }];
 
@@ -85,26 +96,27 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
 
   const handleImageDoubleTap = (e) => {
     e.stopPropagation();
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    if (!isLiked) {
+      handleLikeToggle();
+      return;
+    }
     setLikeAnimating(true);
     setTimeout(() => setLikeAnimating(false), 800);
-
-    if (!isLiked) {
-      setIsLiked(true);
-      setLikesCount((prev) => prev + 1);
-      if (isAuthenticated) {
-        api.post(`/posts/${post._id}/like`).catch(() => {
-          setIsLiked(false);
-          setLikesCount((prev) => Math.max(0, prev - 1));
-        });
-      }
-    }
   };
 
   const handleLikeToggle = async () => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
     const nextState = !isLiked;
+    const nextCount = nextState ? likesCount + 1 : Math.max(0, likesCount - 1);
     setIsLiked(nextState);
-    setLikesCount((prev) => (nextState ? prev + 1 : Math.max(0, prev - 1)));
+    setLikesCount(nextCount);
     if (nextState) {
       setLikeAnimating(true);
       setTimeout(() => setLikeAnimating(false), 800);
@@ -112,18 +124,45 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
 
     try {
       await api.post(`/posts/${post._id}/like`);
-      if (onPostUpdated) {
-        onPostUpdated({ ...post, isLiked: nextState, likesCount: nextState ? likesCount + 1 : likesCount - 1 });
-      }
+      reportChange({ isLiked: nextState, likesCount: nextCount });
     } catch (err) {
       setIsLiked(!nextState);
       setLikesCount((prev) => (nextState ? Math.max(0, prev - 1) : prev + 1));
     }
   };
 
-  const handleSaveToggle = (e) => {
+  const handleSaveToggle = async (e) => {
     e.stopPropagation();
-    setIsSaved((prev) => !prev);
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    const nextState = !isSaved;
+    setIsSaved(nextState);
+    try {
+      const res = await api.post(`/posts/${post._id}/save`);
+      reportChange({ isSaved: res.data.isSaved });
+    } catch (err) {
+      setIsSaved(!nextState);
+      console.error('Save toggle error:', err);
+    }
+  };
+
+  const focusComment = () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    commentInputRef.current?.focus();
+  };
+
+  const handleShare = () => {
+    const postUrl = `${window.location.origin}/post/${post._id}`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(postUrl);
+    }
+    setToastMessage('Link copied to clipboard!');
+    setTimeout(() => setToastMessage(''), 3000);
   };
 
   const handleAddComment = async (e) => {
@@ -151,6 +190,7 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
         }
         setCommentText('');
         setReplyingTo(null);
+        updateCommentsCount((post.commentsCount || 0) + 1);
       }
     } catch (err) {
       console.error('Add comment error:', err);
@@ -162,6 +202,9 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
   const handleDeleteComment = async (commentId, parentId = null) => {
     try {
       await api.delete(`/comments/${commentId}`);
+      const target = comments.find((c) => c._id === commentId);
+      const removed = parentId ? 1 : 1 + (target?.replies?.length || 0);
+      updateCommentsCount(Math.max(0, (post.commentsCount || 0) - removed));
       if (parentId) {
         setComments((prev) =>
           prev.map((c) =>
@@ -448,11 +491,11 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
                     <FontAwesomeIcon icon={isLiked ? faHeart : farHeart} style={{ fontSize: 24, color: isLiked ? '#ed4956' : 'currentColor' }} />
                   </button>
 
-                  <button className="action-btn-icon" aria-label="Comment">
+                  <button className="action-btn-icon" aria-label="Comment" onClick={focusComment}>
                     <FontAwesomeIcon icon={farComment} style={{ fontSize: 24 }} />
                   </button>
 
-                  <button className="action-btn-icon" aria-label="Share">
+                  <button className="action-btn-icon" aria-label="Share" onClick={handleShare}>
                     <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: 22 }} />
                   </button>
                 </div>
@@ -509,6 +552,13 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
           </div>
         </div>
       </div>
+
+      {toastMessage && (
+        <div className="detail-toast">
+          <FontAwesomeIcon icon={faCheck} style={{ fontSize: 16 }} />
+          <span>{toastMessage}</span>
+        </div>
+      )}
 
       {showEditModal && (
         <div className="modal-overlay edit-post-overlay" onClick={() => setShowEditModal(false)}>
