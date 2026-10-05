@@ -91,7 +91,7 @@
     padding: 16px 0 80px;
   }
   .app-main-viewport {
-    padding-bottom: var(--mobile-nav-height, 56px);
+    padding-bottom: var(--mobile-nav-height, 60px);
   }
 }
 
