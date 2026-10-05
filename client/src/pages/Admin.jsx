@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowTrendDown, faArrowTrendUp, faChartLine, faChevronLeft, faChevronRight, faComment, faFire, faGauge, faHashtag, faImage, faLayerGroup, faMagnifyingGlass, faRightFromBracket, faTrash, faUserShield, faUsers, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { Area, AreaChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { faArrowTrendDown, faArrowTrendUp, faCalendarDays, faChartLine, faChevronLeft, faChevronRight, faComment, faDownload, faFire, faGauge, faHashtag, faImage, faLayerGroup, faMagnifyingGlass, faRightFromBracket, faTrash, faUserShield, faUsers, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { Area, AreaChart, CartesianGrid, PolarAngleAxis, RadialBar, RadialBarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { getAvatarUrl } from '../utils/avatar';
@@ -10,6 +10,16 @@ import VerifiedBadge from '../components/VerifiedBadge';
 import './Admin.css';
 
 const PAGE_SIZE = 10;
+const EXPORT_PAGE_SIZE = 50;
+const EXPORT_MAX_PAGES = 20;
+
+const COLORS = {
+  users: '#6c5ce7',
+  posts: '#f59e0b',
+  comments: '#14b8a6',
+  stories: '#ec4899',
+  verified: '#0095f6',
+};
 
 const tooltipStyle = {
   background: 'var(--bg-surface-elevated)',
@@ -33,10 +43,52 @@ const trendOf = (current, previous) => {
   return { percent: Math.abs(change), direction: change >= 0 ? 'up' : 'down' };
 };
 
+const escapeCsv = (value) => `"${String(value ?? '').replace(/"/g, '""')}"`;
+
+const buildUsersCsv = (rows) => {
+  const header = ['username', 'email', 'role', 'verified', 'joined', 'posts', 'followers'];
+  const lines = rows.map((user) =>
+    [
+      user.username,
+      user.email,
+      user.role,
+      user.isVerified ? 'yes' : 'no',
+      new Date(user.createdAt).toISOString().slice(0, 10),
+      user.postsCount,
+      user.followersCount,
+    ]
+      .map(escapeCsv)
+      .join(',')
+  );
+  return [header.join(','), ...lines].join('\r\n');
+};
+
+const downloadFile = (content, filename) => {
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+};
+
+const fetchAllUsers = async () => {
+  const rows = [];
+  for (let page = 1; page <= EXPORT_MAX_PAGES; page += 1) {
+    const res = await api.get('/admin/users', { params: { page, limit: EXPORT_PAGE_SIZE } });
+    rows.push(...res.data.data);
+    if (!res.data.pagination.hasMore) break;
+  }
+  return rows;
+};
+
 const EmptyState = ({ icon, title, text }) => (
   <div className="admin-empty">
     <span className="admin-empty-icon">
-      <FontAwesomeIcon icon={icon} style={{ fontSize: 18 }} />
+      <FontAwesomeIcon icon={icon} style={{ fontSize: 16 }} />
     </span>
     <p className="admin-empty-title">{title}</p>
     {text && <p className="admin-empty-text">{text}</p>}
@@ -57,11 +109,11 @@ const TrendPill = ({ trend }) => {
 };
 
 const StatTile = ({ icon, label, value, tone, trend, footnote }) => (
-  <div className="card admin-stat-tile">
+  <div className={`card admin-stat-tile ${tone}`}>
     <div className="admin-stat-top">
-      <div className={`admin-stat-icon ${tone}`}>
-        <FontAwesomeIcon icon={icon} style={{ fontSize: 18 }} />
-      </div>
+      <span className="admin-stat-icon">
+        <FontAwesomeIcon icon={icon} style={{ fontSize: 17 }} />
+      </span>
       <span className="admin-stat-label">{label}</span>
     </div>
     {value === null ? (
@@ -73,6 +125,27 @@ const StatTile = ({ icon, label, value, tone, trend, footnote }) => (
       {value !== null && trend !== undefined && <TrendPill trend={trend} />}
       {footnote && <span className="admin-stat-note">{footnote}</span>}
     </div>
+  </div>
+);
+
+const RatioRing = ({ label, fill, display, color }) => (
+  <div className="admin-ring">
+    <div className="admin-ring-chart">
+      <ResponsiveContainer width="100%" height="100%">
+        <RadialBarChart
+          innerRadius="74%"
+          outerRadius="100%"
+          data={[{ name: label, value: Math.min(100, Math.max(0, fill)), fill: color }]}
+          startAngle={90}
+          endAngle={-270}
+        >
+          <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
+          <RadialBar dataKey="value" cornerRadius={20} background className="admin-ring-bar" />
+        </RadialBarChart>
+      </ResponsiveContainer>
+      <span className="admin-ring-value" style={{ color }}>{display}</span>
+    </div>
+    <span className="admin-ring-label">{label}</span>
   </div>
 );
 
@@ -97,15 +170,15 @@ const GrowthChart = ({ title, subtitle, data, color, gradientId }) => {
       {!data ? (
         <div className="skeleton admin-chart-skeleton" />
       ) : total === 0 ? (
-        <EmptyState icon={faChartLine} title="No activity this week" text="New sign-ups will show up here as they happen." />
+        <EmptyState icon={faChartLine} title="No activity this week" text="New activity will show up here as it happens." />
       ) : (
         <div className="admin-chart">
-          <ResponsiveContainer width="100%" height={230}>
-            <AreaChart data={data} margin={{ top: 14, right: 12, left: -18, bottom: 0 }}>
+          <ResponsiveContainer width="100%" height={200}>
+            <AreaChart data={data} margin={{ top: 12, right: 12, left: -18, bottom: 0 }}>
               <defs>
                 <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={color} stopOpacity={0.5} />
-                  <stop offset="60%" stopColor={color} stopOpacity={0.14} />
+                  <stop offset="0%" stopColor={color} stopOpacity={0.55} />
+                  <stop offset="60%" stopColor={color} stopOpacity={0.16} />
                   <stop offset="100%" stopColor={color} stopOpacity={0} />
                 </linearGradient>
               </defs>
@@ -131,144 +204,83 @@ const GrowthChart = ({ title, subtitle, data, color, gradientId }) => {
   );
 };
 
-const VerifiedDonut = ({ verified, total }) => {
-  const regular = Math.max(0, total - verified);
-  const share = total > 0 ? Math.round((verified / total) * 100) : 0;
-  const segments = [
-    { name: 'Verified', value: verified, color: '#0095f6' },
-    { name: 'Regular', value: regular, color: '#6c5ce7' },
-  ];
-
-  return (
-    <div className="card admin-chart-card admin-donut-card">
-      <div className="admin-card-header">
+const CreatorsWidget = ({ tags, users }) => (
+  <div className="card admin-widget-card">
+    <div className="admin-widget-col">
+      <div className="admin-widget-head">
+        <span className="admin-widget-icon" style={{ color: COLORS.comments }}>
+          <FontAwesomeIcon icon={faHashtag} style={{ fontSize: 13 }} />
+        </span>
         <div>
-          <h3>Verified accounts</h3>
-          <p>Share of all users</p>
+          <h3>Trending hashtags</h3>
+          <p>Last 30 days</p>
         </div>
-        {verified !== null && total > 0 && <span className="admin-chart-total">{share}%</span>}
       </div>
 
-      {verified === null ? (
-        <div className="skeleton admin-chart-skeleton" />
-      ) : total === 0 ? (
-        <EmptyState icon={faUsers} title="No accounts yet" />
-      ) : (
-        <div className="admin-donut-body">
-          <div className="admin-donut">
-            <ResponsiveContainer width="100%" height={180}>
-              <PieChart>
-                <Pie
-                  data={segments}
-                  dataKey="value"
-                  innerRadius={58}
-                  outerRadius={80}
-                  startAngle={90}
-                  endAngle={-270}
-                  stroke="none"
-                  paddingAngle={verified > 0 && regular > 0 ? 3 : 0}
-                >
-                  {segments.map((segment) => (
-                    <Cell key={segment.name} fill={segment.color} />
-                  ))}
-                </Pie>
-                <Tooltip contentStyle={tooltipStyle} />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="admin-donut-center">
-              <span className="admin-donut-value">{verified.toLocaleString()}</span>
-              <span className="admin-donut-label">verified</span>
-            </div>
-          </div>
-
-          <ul className="admin-donut-legend">
-            {segments.map((segment) => (
-              <li key={segment.name}>
-                <span className="admin-legend-dot" style={{ background: segment.color }} />
-                <span className="admin-legend-name">{segment.name}</span>
-                <span className="admin-legend-count">{segment.value.toLocaleString()}</span>
-              </li>
-            ))}
-          </ul>
+      {!tags ? (
+        <div className="admin-list-skeleton">
+          <div className="skeleton" />
+          <div className="skeleton" />
+          <div className="skeleton" />
         </div>
+      ) : tags.length === 0 ? (
+        <EmptyState icon={faHashtag} title="No hashtags yet" text="Tags from the last 30 days will appear here." />
+      ) : (
+        <ol className="admin-rank-list">
+          {tags.map((item, index) => (
+            <li key={item.tag} className="admin-rank-item">
+              <span className="admin-rank-number" style={{ color: COLORS.comments }}>{index + 1}</span>
+              <span className="admin-rank-name">#{item.tag}</span>
+              <span className="admin-rank-count">{item.count.toLocaleString()}</span>
+            </li>
+          ))}
+        </ol>
       )}
     </div>
-  );
-};
 
-const TrendingCard = ({ tags }) => (
-  <div className="card admin-list-card">
-    <div className="admin-card-header">
-      <div>
-        <h3>Trending hashtags</h3>
-        <p>Last 30 days</p>
+    <div className="admin-widget-divider" />
+
+    <div className="admin-widget-col">
+      <div className="admin-widget-head">
+        <span className="admin-widget-icon" style={{ color: COLORS.stories }}>
+          <FontAwesomeIcon icon={faFire} style={{ fontSize: 13 }} />
+        </span>
+        <div>
+          <h3>Most followed</h3>
+          <p>Top creators by followers</p>
+        </div>
       </div>
-      <span className="admin-card-badge">
-        <FontAwesomeIcon icon={faHashtag} style={{ fontSize: 14 }} />
-      </span>
+
+      {!users ? (
+        <div className="admin-list-skeleton">
+          <div className="skeleton" />
+          <div className="skeleton" />
+          <div className="skeleton" />
+        </div>
+      ) : users.length === 0 ? (
+        <EmptyState icon={faFire} title="No followers yet" text="Creators with the most followers will be listed here." />
+      ) : (
+        <ul className="admin-follow-list">
+          {users.map((user) => (
+            <li key={user._id} className="admin-follow-item">
+              <img
+                src={getAvatarUrl(user.avatar, user.fullName)}
+                alt={user.username}
+                className={`admin-follow-avatar ${user.isVerified ? 'is-verified' : ''}`}
+              />
+              <div className="admin-follow-info">
+                <span className="admin-follow-name">
+                  {user.fullName}
+                  {user.isVerified && <VerifiedBadge size={12} />}
+                </span>
+                <span className="admin-follow-handle">@{user.username}</span>
+              </div>
+              <span className="admin-follow-count">{user.followersCount.toLocaleString()}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
-
-    {!tags ? (
-      <div className="admin-list-skeleton">
-        <div className="skeleton" />
-        <div className="skeleton" />
-        <div className="skeleton" />
-      </div>
-    ) : tags.length === 0 ? (
-      <EmptyState icon={faHashtag} title="No hashtags yet" text="Tags from the last 30 days will appear here." />
-    ) : (
-      <ol className="admin-rank-list">
-        {tags.map((item, index) => (
-          <li key={item.tag} className="admin-rank-item">
-            <span className="admin-rank-number">{index + 1}</span>
-            <span className="admin-rank-name">#{item.tag}</span>
-            <span className="admin-rank-count">{item.count.toLocaleString()} posts</span>
-          </li>
-        ))}
-      </ol>
-    )}
-  </div>
-);
-
-const TopUsersCard = ({ users }) => (
-  <div className="card admin-list-card admin-top-card">
-    <div className="admin-card-header">
-      <div>
-        <h3>Most followed</h3>
-        <p>Top creators by followers</p>
-      </div>
-      <span className="admin-card-badge">
-        <FontAwesomeIcon icon={faFire} style={{ fontSize: 14 }} />
-      </span>
-    </div>
-
-    {!users ? (
-      <div className="admin-top-grid">
-        {[0, 1, 2, 3, 4].map((item) => (
-          <div key={item} className="admin-top-skeleton skeleton" />
-        ))}
-      </div>
-    ) : users.length === 0 ? (
-      <EmptyState icon={faFire} title="No followers yet" text="Creators with the most followers will be listed here." />
-    ) : (
-      <ul className="admin-top-grid">
-        {users.map((user) => (
-          <li key={user._id} className="admin-top-user">
-            <img
-              src={getAvatarUrl(user.avatar, user.fullName)}
-              alt={user.username}
-              className={`admin-top-avatar ${user.isVerified ? 'is-verified' : ''}`}
-            />
-            <span className="admin-top-name">
-              {user.fullName}
-              {user.isVerified && <VerifiedBadge size={13} />}
-            </span>
-            <span className="admin-top-handle">@{user.username}</span>
-            <span className="admin-top-followers">{user.followersCount.toLocaleString()} followers</span>
-          </li>
-        ))}
-      </ul>
-    )}
   </div>
 );
 
@@ -276,6 +288,8 @@ const Overview = () => {
   const [stats, setStats] = useState(null);
   const [error, setError] = useState('');
   const [reloadKey, setReloadKey] = useState(0);
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState('');
 
   useEffect(() => {
     let ignore = false;
@@ -299,6 +313,25 @@ const Overview = () => {
     setReloadKey((key) => key + 1);
   };
 
+  const exportUsers = async () => {
+    setExporting(true);
+    setExportError('');
+    try {
+      const rows = await fetchAllUsers();
+      if (rows.length === 0) {
+        setExportError('There are no users to export.');
+        return;
+      }
+      const date = new Date().toISOString().slice(0, 10);
+      downloadFile(buildUsersCsv(rows), `vibely-users-${date}.csv`);
+    } catch (err) {
+      console.error('Failed to export users:', err);
+      setExportError('Could not export users. Please try again.');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   if (error) {
     return (
       <div className="card admin-error">
@@ -308,40 +341,74 @@ const Overview = () => {
     );
   }
 
+  const totalUsers = stats ? stats.totals.users : 0;
   const usersThisWeek = stats ? sumCounts(stats.newUsersByDay) : 0;
   const postsThisWeek = stats ? sumCounts(stats.newPostsByDay) : 0;
+  const verifiedShare = stats && totalUsers > 0 ? (stats.totals.verified / totalUsers) * 100 : 0;
+  const joinedShare = stats && totalUsers > 0 ? (usersThisWeek / totalUsers) * 100 : 0;
+  const postsPerUser = stats && totalUsers > 0 ? stats.totals.posts / totalUsers : 0;
 
   return (
     <>
+      <div className="admin-utility-bar">
+        <span className="admin-range-chip">
+          <FontAwesomeIcon icon={faCalendarDays} style={{ fontSize: 13 }} />
+          Last 7 days
+        </span>
+        <div className="admin-utility-actions">
+          {exportError && <span className="admin-export-error">{exportError}</span>}
+          <button className="btn btn-primary admin-export-btn" onClick={exportUsers} disabled={exporting || !stats}>
+            <FontAwesomeIcon icon={faDownload} style={{ fontSize: 13 }} />
+            {exporting ? 'Exporting...' : 'Export CSV'}
+          </button>
+        </div>
+      </div>
+
       <div className="admin-stat-grid">
         <StatTile
           icon={faUsers}
           label="Total users"
           value={stats ? stats.totals.users : null}
-          tone="tone-accent"
+          tone="tone-violet"
           trend={stats ? trendOf(usersThisWeek, stats.previousWeek.users) : undefined}
         />
         <StatTile
           icon={faImage}
           label="Total posts"
           value={stats ? stats.totals.posts : null}
-          tone="tone-blue"
+          tone="tone-amber"
           trend={stats ? trendOf(postsThisWeek, stats.previousWeek.posts) : undefined}
         />
         <StatTile
           icon={faComment}
           label="Total comments"
           value={stats ? stats.totals.comments : null}
-          tone="tone-green"
+          tone="tone-teal"
           footnote="All time"
         />
         <StatTile
           icon={faLayerGroup}
           label="Active stories"
           value={stats ? stats.totals.stories : null}
-          tone="tone-amber"
+          tone="tone-pink"
           footnote="Live right now"
         />
+      </div>
+
+      <div className="card admin-rings-card">
+        {!stats ? (
+          <div className="admin-rings-skeleton">
+            <div className="skeleton" />
+            <div className="skeleton" />
+            <div className="skeleton" />
+          </div>
+        ) : (
+          <>
+            <RatioRing label="Verified share" fill={verifiedShare} display={`${Math.round(verifiedShare)}%`} color={COLORS.verified} />
+            <RatioRing label="Joined this week" fill={joinedShare} display={`${Math.round(joinedShare)}%`} color={COLORS.comments} />
+            <RatioRing label="Posts per user" fill={(postsPerUser / 5) * 100} display={postsPerUser.toFixed(1)} color={COLORS.posts} />
+          </>
+        )}
       </div>
 
       <div className="admin-row admin-row-split">
@@ -349,27 +416,19 @@ const Overview = () => {
           title="New users"
           subtitle="Daily sign-ups, last 7 days"
           data={stats ? stats.newUsersByDay : null}
-          color="#6c5ce7"
+          color={COLORS.users}
           gradientId="adminUsersGradient"
         />
-        <VerifiedDonut
-          verified={stats ? stats.totals.verified : null}
-          total={stats ? stats.totals.users : 0}
-        />
-      </div>
-
-      <div className="admin-row admin-row-split">
         <GrowthChart
           title="New posts"
           subtitle="Daily posts, last 7 days"
           data={stats ? stats.newPostsByDay : null}
-          color="#0095f6"
+          color={COLORS.posts}
           gradientId="adminPostsGradient"
         />
-        <TrendingCard tags={stats ? stats.trendingTags : null} />
       </div>
 
-      <TopUsersCard users={stats ? stats.topFollowed : null} />
+      <CreatorsWidget tags={stats ? stats.trendingTags : null} users={stats ? stats.topFollowed : null} />
     </>
   );
 };
