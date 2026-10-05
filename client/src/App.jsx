@@ -14,6 +14,7 @@ import Profile from './pages/Profile';
 import Saved from './pages/Saved';
 import Settings from './pages/Settings';
 import PostPage from './pages/PostPage';
+import Admin from './pages/Admin';
 import Auth from './pages/Auth';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
@@ -27,7 +28,7 @@ function AppContent() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [feedRefreshKey, setFeedRefreshKey] = useState(0);
   const location = useLocation();
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
 
   if (loading) {
     return <div className="app-loading" />;
@@ -77,6 +78,7 @@ function AppContent() {
               element={<Profile onOpenCreateModal={() => setIsCreateModalOpen(true)} refreshKey={feedRefreshKey} />}
             />
             <Route path="/post/:id" element={<PostPage />} />
+            <Route path="/admin" element={user?.role === 'admin' ? <Admin /> : <Navigate to="/" replace />} />
             <Route path="/login" element={<Auth mode="login" />} />
             <Route path="/register" element={<Auth mode="register" />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />

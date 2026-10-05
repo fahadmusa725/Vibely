@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Post = require('../models/Post');
 const { uploadStream } = require('../config/cloudinary');
 const { notify, unnotify } = require('../utils/notify');
+const escapeRegex = require('../utils/escapeRegex');
 
 exports.getUserProfile = async (req, res) => {
   try {
@@ -267,7 +268,7 @@ exports.searchUsers = async (req, res) => {
       return res.status(200).json({ success: true, data: [] });
     }
 
-    const escaped = q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escaped = escapeRegex(q.trim());
     const regex = new RegExp(escaped, 'i');
     const users = await User.find({
       $or: [{ username: regex }, { fullName: regex }],

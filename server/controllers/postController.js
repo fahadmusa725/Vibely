@@ -3,6 +3,7 @@ const Comment = require('../models/Comment');
 const User = require('../models/User');
 const { uploadStream } = require('../config/cloudinary');
 const { notify, unnotify } = require('../utils/notify');
+const { getTrendingTagList } = require('../utils/trending');
 
 const extractHashtags = (caption) => {
   if (!caption) return [];
@@ -193,28 +194,7 @@ exports.getDiscover = async (req, res) => {
 exports.getTrendingTags = async (req, res) => {
   try {
     const limit = parseInt(req.query.limit, 10) || 5;
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-
-    const trending = await Post.aggregate([
-      { $match: { createdAt: { $gte: thirtyDaysAgo } } },
-      { $unwind: '$hashtags' },
-      {
-        $group: {
-          _id: '$hashtags',
-          count: { $sum: 1 },
-          latestPostDate: { $max: '$createdAt' },
-        },
-      },
-      { $sort: { count: -1, latestPostDate: -1, _id: 1 } },
-      { $limit: limit },
-      {
-        $project: {
-          _id: 0,
-          tag: '$_id',
-          count: 1,
-        },
-      },
-    ]);
+    const trending = await getTrendingTagList(limit);
 
     return res.status(200).json({
       success: true,

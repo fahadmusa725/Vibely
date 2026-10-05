@@ -67,6 +67,7 @@ exports.register = async (req, res) => {
         avatar: user.avatar,
         coverPhoto: user.coverPhoto,
         bio: user.bio,
+        role: user.role,
         followersCount: 0,
         followingCount: 0,
         token,
@@ -134,6 +135,7 @@ exports.login = async (req, res) => {
         followersCount: user.followers.length,
         followingCount: user.following.length,
         postsCount,
+        role: user.role,
         token,
       },
     });

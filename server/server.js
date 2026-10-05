@@ -18,8 +18,10 @@ const postRoutes = require('./routes/postRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const storyRoutes = require('./routes/storyRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const ensureAdmin = require('./scripts/ensureAdmin');
 
-connectDB();
+connectDB().then(() => ensureAdmin());
 
 const app = express();
 
@@ -50,6 +52,7 @@ app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/stories', storyRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/api/health', (req, res) => {
   res.status(200).json({
