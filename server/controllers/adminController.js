@@ -40,6 +40,17 @@ const countPerDay = async (model) => {
   return days.map((date) => ({ date, count: counts.get(date) || 0 }));
 };
 
+const weekBounds = () => {
+  const thisWeekStart = new Date(`${lastDays()[0]}T00:00:00.000Z`);
+  const previousWeekStart = new Date(thisWeekStart.getTime() - DAYS * 24 * 60 * 60 * 1000);
+  return { thisWeekStart, previousWeekStart };
+};
+
+const countPreviousWeek = (model) => {
+  const { previousWeekStart, thisWeekStart } = weekBounds();
+  return model.countDocuments({ createdAt: { $gte: previousWeekStart, $lt: thisWeekStart } });
+};
+
 const deleteUserCascade = async (userId) => {
   const userPosts = await Post.find({ author: userId }).select('_id').lean();
   const postIds = userPosts.map((post) => post._id);
@@ -89,36 +100,51 @@ const deleteUserCascade = async (userId) => {
 
 exports.getStats = async (req, res) => {
   try {
-    const [users, posts, comments, stories, newUsersByDay, newPostsByDay, trendingTags, topFollowed] =
-      await Promise.all([
-        User.countDocuments({}),
-        Post.countDocuments({}),
-        Comment.countDocuments({}),
-        Story.countDocuments({}),
-        countPerDay(User),
-        countPerDay(Post),
-        getTrendingTagList(5),
-        User.aggregate([
-          {
-            $project: {
-              username: 1,
-              fullName: 1,
-              avatar: 1,
-              isVerified: 1,
-              followersCount: { $size: { $ifNull: ['$followers', []] } },
-            },
+    const [
+      users,
+      posts,
+      comments,
+      stories,
+      verifiedUsers,
+      newUsersByDay,
+      newPostsByDay,
+      previousWeekUsers,
+      previousWeekPosts,
+      trendingTags,
+      topFollowed,
+    ] = await Promise.all([
+      User.countDocuments({}),
+      Post.countDocuments({}),
+      Comment.countDocuments({}),
+      Story.countDocuments({}),
+      User.countDocuments({ isVerified: true }),
+      countPerDay(User),
+      countPerDay(Post),
+      countPreviousWeek(User),
+      countPreviousWeek(Post),
+      getTrendingTagList(5),
+      User.aggregate([
+        {
+          $project: {
+            username: 1,
+            fullName: 1,
+            avatar: 1,
+            isVerified: 1,
+            followersCount: { $size: { $ifNull: ['$followers', []] } },
           },
-          { $sort: { followersCount: -1, createdAt: -1 } },
-          { $limit: 5 },
-        ]),
-      ]);
+        },
+        { $sort: { followersCount: -1, createdAt: -1 } },
+        { $limit: 5 },
+      ]),
+    ]);
 
     return res.status(200).json({
       success: true,
       data: {
-        totals: { users, posts, comments, stories },
+        totals: { users, posts, comments, stories, verified: verifiedUsers },
         newUsersByDay,
         newPostsByDay,
+        previousWeek: { users: previousWeekUsers, posts: previousWeekPosts },
         trendingTags,
         topFollowed,
       },
