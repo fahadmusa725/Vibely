@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowTrendUp, faCircle, faUsers, faXmark } from '@fortawesome/free-solid-svg-icons';
 import VerifiedBadge from './VerifiedBadge';
@@ -20,6 +21,7 @@ const formatLastActive = (dateStr) => {
 
 const RightSidebar = ({ suggestedUsers = [], onFollowUser }) => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [dismissedIds, setDismissedIds] = useState([]);
   const [trendingTags, setTrendingTags] = useState([]);
   const [contacts, setContacts] = useState([]);
@@ -27,14 +29,15 @@ const RightSidebar = ({ suggestedUsers = [], onFollowUser }) => {
 
   useEffect(() => {
     fetchTrendingTags();
-    fetchContacts();
-  }, []);
+    if (isAuthenticated) fetchContacts();
+  }, [isAuthenticated]);
 
   const fetchTrendingTags = async () => {
     try {
       const res = await api.get('/posts/trending-tags?limit=5');
       if (res.data.success) setTrendingTags(res.data.data);
-    } catch (_) {
+    } catch (err) {
+      console.error('Failed to load trending tags:', err);
     }
   };
 
@@ -43,7 +46,8 @@ const RightSidebar = ({ suggestedUsers = [], onFollowUser }) => {
     try {
       const res = await api.get('/users/me/contacts');
       if (res.data.success) setContacts(res.data.data);
-    } catch (_) {
+    } catch (err) {
+      console.error('Failed to load contacts:', err);
     } finally {
       setLoadingContacts(false);
     }
@@ -80,7 +84,7 @@ const RightSidebar = ({ suggestedUsers = [], onFollowUser }) => {
               return (
                 <div
                   key={u._id}
-                  className="rs-user-item"
+                  className={`rs-user-item ${u.isVerified ? 'is-verified' : ''}`}
                   onClick={() => navigate(`/profile/${u.username}`)}
                 >
                   <img
@@ -105,6 +109,10 @@ const RightSidebar = ({ suggestedUsers = [], onFollowUser }) => {
                       className="btn btn-primary btn-sm rs-follow-btn"
                       onClick={(e) => {
                         e.stopPropagation();
+                        if (!isAuthenticated) {
+                          navigate('/login');
+                          return;
+                        }
                         if (onFollowUser) onFollowUser(u._id);
                       }}
                     >
@@ -161,54 +169,56 @@ const RightSidebar = ({ suggestedUsers = [], onFollowUser }) => {
         </div>
       </div>
 
-      <div className="rs-card card">
-        <div className="rs-card-header">
-          <div className="rs-card-title">
-            <FontAwesomeIcon icon={faCircle} className="rs-title-icon" style={{ fontSize: 18, color: 'var(--success)' }} />
-            <h3>Contacts</h3>
+      {isAuthenticated && (
+        <div className="rs-card card">
+          <div className="rs-card-header">
+            <div className="rs-card-title">
+              <FontAwesomeIcon icon={faCircle} className="rs-title-icon" style={{ fontSize: 18, color: 'var(--success)' }} />
+              <h3>Contacts</h3>
+            </div>
+          </div>
+
+          <div className="rs-contact-list">
+            {loadingContacts ? (
+              <div className="rs-empty"><p>Loading...</p></div>
+            ) : contacts.length > 0 ? (
+              contacts.map((c) => {
+                const status = formatLastActive(c.lastActive);
+                const isOnline = status === 'online';
+                return (
+                  <div
+                    key={c._id}
+                    className="rs-contact-item"
+                    onClick={() => navigate(`/profile/${c.username}`)}
+                  >
+                    <div className="rs-contact-avatar-wrap">
+                      <img
+                        src={c.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
+                        alt={c.name}
+                        className="rs-contact-avatar"
+                      />
+                      {isOnline && <span className="rs-online-dot" aria-label="Online" />}
+                    </div>
+                    <div className="rs-contact-info">
+                      <span className="rs-contact-name">{c.name}</span>
+                      <span className={`rs-contact-status ${isOnline ? 'online' : ''}`}>
+                        {isOnline ? 'Active now' : `Last seen ${status}`}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="rs-empty">
+                <p>Follow creators to see them here.</p>
+                <button className="rs-see-all-btn" style={{ marginTop: 6 }} onClick={() => navigate('/search')}>
+                  Find People
+                </button>
+              </div>
+            )}
           </div>
         </div>
-
-        <div className="rs-contact-list">
-          {loadingContacts ? (
-            <div className="rs-empty"><p>Loading…</p></div>
-          ) : contacts.length > 0 ? (
-            contacts.map((c) => {
-              const status = formatLastActive(c.lastActive);
-              const isOnline = status === 'online';
-              return (
-                <div
-                  key={c._id}
-                  className="rs-contact-item"
-                  onClick={() => navigate(`/profile/${c.username}`)}
-                >
-                  <div className="rs-contact-avatar-wrap">
-                    <img
-                      src={c.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
-                      alt={c.name}
-                      className="rs-contact-avatar"
-                    />
-                    {isOnline && <span className="rs-online-dot" aria-label="Online" />}
-                  </div>
-                  <div className="rs-contact-info">
-                    <span className="rs-contact-name">{c.name}</span>
-                    <span className={`rs-contact-status ${isOnline ? 'online' : ''}`}>
-                      {isOnline ? 'Active now' : `Last seen ${status}`}
-                    </span>
-                  </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="rs-empty">
-              <p>Follow creators to see them here.</p>
-              <button className="rs-see-all-btn" style={{ marginTop: 6 }} onClick={() => navigate('/search')}>
-                Find People
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
+      )}
     </aside>
   );
 };
