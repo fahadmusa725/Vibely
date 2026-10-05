@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowTrendDown, faArrowTrendUp, faCalendarDays, faChartLine, faChevronLeft, faChevronRight, faComment, faDownload, faFire, faGauge, faHashtag, faHeart, faImage, faLayerGroup, faMagnifyingGlass, faRightFromBracket, faTrash, faUsers, faWandMagicSparkles, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDown, faArrowRight, faArrowRotateRight, faArrowUp, faCalendarDays, faChartLine, faChevronLeft, faChevronRight, faComment, faDownload, faFire, faHashtag, faHeart, faHouse, faImage, faLayerGroup, faMagnifyingGlass, faMoon, faRightFromBracket, faSun, faTrash, faUserPlus, faUsers, faWandMagicSparkles, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { Area, AreaChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { getAvatarUrl } from '../utils/avatar';
 import VerifiedBadge from '../components/VerifiedBadge';
 import './Admin.css';
@@ -14,12 +15,12 @@ const EXPORT_PAGE_SIZE = 50;
 const EXPORT_MAX_PAGES = 20;
 
 const COLORS = {
-  users: '#6c5ce7',
-  posts: '#0095f6',
+  users: '#7c5cff',
+  posts: '#3b82f6',
   comments: '#ec4899',
-  stories: '#f59e0b',
-  verified: '#0095f6',
-  regular: '#6c5ce7',
+  stories: '#14b8a6',
+  verified: '#22b8f0',
+  regular: '#7c5cff',
 };
 
 const tooltipStyle = {
@@ -31,7 +32,10 @@ const tooltipStyle = {
   boxShadow: 'var(--shadow-md)',
 };
 
-const shortDay = (date) => date.slice(5).replace('-', '/');
+const shortDay = (date) => {
+  const day = new Date(`${date}T00:00:00Z`);
+  return day.toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' });
+};
 
 const formatDate = (value) =>
   new Date(value).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
@@ -106,52 +110,65 @@ const EmptyState = ({ icon, title, text }) => (
   </div>
 );
 
-const TrendPill = ({ trend }) => {
-  if (!trend) return null;
-  if (trend.isNew) return <span className="admin-trend neutral">New this week</span>;
+const ListSkeleton = () => (
+  <div className="admin-list-skeleton">
+    <div className="skeleton" />
+    <div className="skeleton" />
+    <div className="skeleton" />
+    <div className="skeleton" />
+  </div>
+);
+
+const TrendLine = ({ trend, footnote }) => {
+  if (footnote) return <span className="admin-stat-note">{footnote}</span>;
+  if (!trend) return <span className="admin-stat-note">No change vs. last week</span>;
+  if (trend.isNew) {
+    return (
+      <div className="admin-trend-line">
+        <span className="admin-trend up">
+          <FontAwesomeIcon icon={faArrowUp} style={{ fontSize: 11 }} />
+          New
+        </span>
+        <span className="admin-stat-note">this week</span>
+      </div>
+    );
+  }
 
   const up = trend.direction === 'up';
   return (
-    <span className={`admin-trend ${up ? 'up' : 'down'}`}>
-      <FontAwesomeIcon icon={up ? faArrowTrendUp : faArrowTrendDown} style={{ fontSize: 11 }} />
-      {trend.percent}% vs last week
-    </span>
+    <div className="admin-trend-line">
+      <span className={`admin-trend ${up ? 'up' : 'down'}`}>
+        <FontAwesomeIcon icon={up ? faArrowUp : faArrowDown} style={{ fontSize: 11 }} />
+        {up ? '+' : '-'}{trend.percent}%
+      </span>
+      <span className="admin-stat-note">vs. last week</span>
+    </div>
   );
 };
 
 const StatCard = ({ icon, label, value, tone, trend, footnote }) => (
-  <div className={`card admin-stat-card ${tone}`}>
-    <div className="admin-stat-top">
-      <span className="admin-stat-icon">
-        <FontAwesomeIcon icon={icon} style={{ fontSize: 17 }} />
-      </span>
-      <span className="admin-stat-label">{label}</span>
-    </div>
+  <div className={`admin-stat-card ${tone}`}>
+    <span className="admin-stat-icon">
+      <FontAwesomeIcon icon={icon} style={{ fontSize: 18 }} />
+    </span>
+    <span className="admin-stat-label">{label}</span>
     {value === null ? (
       <div className="skeleton admin-stat-skeleton" />
     ) : (
       <span className="admin-stat-value">{value.toLocaleString()}</span>
     )}
-    <div className="admin-stat-foot">
-      {value !== null && trend !== undefined && <TrendPill trend={trend} />}
-      {footnote && <span className="admin-stat-note">{footnote}</span>}
-    </div>
+    {value !== null && <TrendLine trend={trend} footnote={footnote} />}
   </div>
 );
-
-const lastPointDot = (color, lastIndex) => ({ cx, cy, index }) =>
-  index === lastIndex ? (
-    <circle key={`last-${index}`} cx={cx} cy={cy} r={5} fill={color} stroke="var(--bg-surface)" strokeWidth={2} />
-  ) : null;
 
 const UserGrowthChart = ({ data }) => {
   const total = data ? sumCounts(data) : 0;
 
   return (
-    <div className="card admin-chart-card">
+    <div className="admin-card">
       <div className="admin-card-header">
         <div>
-          <h3>User growth</h3>
+          <h3>User Growth</h3>
           <p>New users over the last 7 days</p>
         </div>
         <span className="admin-period-chip">Last 7 days</span>
@@ -163,28 +180,27 @@ const UserGrowthChart = ({ data }) => {
         <EmptyState icon={faChartLine} title="No new users this week" text="Sign-ups will show up here as they happen." />
       ) : (
         <div className="admin-chart">
-          <ResponsiveContainer width="100%" height={230}>
-            <AreaChart data={data} margin={{ top: 12, right: 12, left: -18, bottom: 0 }}>
+          <ResponsiveContainer width="100%" height={240}>
+            <AreaChart data={data} margin={{ top: 10, right: 10, left: -22, bottom: 0 }}>
               <defs>
                 <linearGradient id="adminUsersGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={COLORS.users} stopOpacity={0.5} />
-                  <stop offset="65%" stopColor={COLORS.users} stopOpacity={0.12} />
-                  <stop offset="100%" stopColor={COLORS.users} stopOpacity={0} />
+                  <stop offset="0%" stopColor={COLORS.users} stopOpacity={0.45} />
+                  <stop offset="100%" stopColor={COLORS.users} stopOpacity={0.02} />
                 </linearGradient>
               </defs>
               <CartesianGrid vertical={false} />
-              <XAxis dataKey="date" tickFormatter={shortDay} tickLine={false} axisLine={false} tick={{ fill: 'var(--text-tertiary)', fontSize: 12 }} />
+              <XAxis dataKey="date" tickFormatter={shortDay} tickLine={false} axisLine={false} tick={{ fill: 'var(--text-tertiary)', fontSize: 12 }} dy={8} />
               <YAxis allowDecimals={false} tickLine={false} axisLine={false} tick={{ fill: 'var(--text-tertiary)', fontSize: 12 }} />
               <Tooltip contentStyle={tooltipStyle} labelFormatter={shortDay} />
               <Area
-                type="monotone"
+                type="linear"
                 dataKey="count"
                 name="New users"
                 stroke={COLORS.users}
                 strokeWidth={2.5}
                 fill="url(#adminUsersGradient)"
-                dot={lastPointDot(COLORS.users, data.length - 1)}
-                activeDot={{ r: 5, strokeWidth: 0, fill: COLORS.users }}
+                dot={{ r: 4, fill: COLORS.users, stroke: 'var(--bg-surface)', strokeWidth: 2 }}
+                activeDot={{ r: 6, strokeWidth: 0, fill: COLORS.users }}
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -202,10 +218,10 @@ const AccountsDonut = ({ verified, total }) => {
   ];
 
   return (
-    <div className="card admin-chart-card admin-donut-card">
+    <div className="admin-card">
       <div className="admin-card-header">
         <div>
-          <h3>Account mix</h3>
+          <h3>Account Mix</h3>
           <p>Verified against regular accounts</p>
         </div>
       </div>
@@ -217,17 +233,17 @@ const AccountsDonut = ({ verified, total }) => {
       ) : (
         <div className="admin-donut-body">
           <div className="admin-donut">
-            <ResponsiveContainer width="100%" height={190}>
+            <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={segments}
                   dataKey="value"
-                  innerRadius={62}
-                  outerRadius={86}
+                  innerRadius="64%"
+                  outerRadius="100%"
                   startAngle={90}
                   endAngle={-270}
                   stroke="none"
-                  paddingAngle={verified > 0 && regular > 0 ? 3 : 0}
+                  paddingAngle={verified > 0 && regular > 0 ? 2 : 0}
                 >
                   {segments.map((segment) => (
                     <Cell key={segment.name} fill={segment.color} />
@@ -247,12 +263,8 @@ const AccountsDonut = ({ verified, total }) => {
               <li key={segment.name}>
                 <span className="admin-legend-dot" style={{ background: segment.color }} />
                 <span className="admin-legend-name">{segment.name}</span>
-                <span className="admin-legend-count">
-                  {segment.value.toLocaleString()}
-                  <span className="admin-legend-share">
-                    {total > 0 ? ` ${Math.round((segment.value / total) * 100)}%` : ''}
-                  </span>
-                </span>
+                <span className="admin-legend-count">{segment.value.toLocaleString()}</span>
+                <span className="admin-legend-share">{Math.round((segment.value / total) * 100)}%</span>
               </li>
             ))}
           </ul>
@@ -262,7 +274,7 @@ const AccountsDonut = ({ verified, total }) => {
   );
 };
 
-const RecentPostsCard = () => {
+const RecentPostsCard = ({ refreshKey }) => {
   const [posts, setPosts] = useState(null);
   const [error, setError] = useState('');
 
@@ -271,7 +283,10 @@ const RecentPostsCard = () => {
     api
       .get('/admin/posts/recent')
       .then((res) => {
-        if (!ignore) setPosts(res.data.data);
+        if (!ignore) {
+          setError('');
+          setPosts(res.data.data);
+        }
       })
       .catch((err) => {
         console.error('Failed to load recent posts:', err);
@@ -280,28 +295,21 @@ const RecentPostsCard = () => {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [refreshKey]);
 
   return (
-    <div className="card admin-list-card">
+    <div className="admin-card admin-card-wide">
       <div className="admin-card-header">
         <div>
-          <h3>Recent posts</h3>
-          <p>Latest activity across the platform</p>
+          <h3>Recent Posts</h3>
+          <p>Latest posts across the platform</p>
         </div>
-        <span className="admin-card-badge" style={{ color: COLORS.posts }}>
-          <FontAwesomeIcon icon={faImage} style={{ fontSize: 13 }} />
-        </span>
       </div>
 
       {error ? (
         <EmptyState icon={faImage} title={error} />
       ) : !posts ? (
-        <div className="admin-list-skeleton">
-          <div className="skeleton" />
-          <div className="skeleton" />
-          <div className="skeleton" />
-        </div>
+        <ListSkeleton />
       ) : posts.length === 0 ? (
         <EmptyState icon={faImage} title="No posts yet" text="Posts from creators will be listed here." />
       ) : (
@@ -352,7 +360,7 @@ const RecentPostsCard = () => {
                       </span>
                     </div>
                   </td>
-                  <td className="admin-col-date admin-cell-joined">{formatDate(post.createdAt)}</td>
+                  <td className="admin-col-date">{formatDate(post.createdAt)}</td>
                 </tr>
               ))}
             </tbody>
@@ -363,24 +371,18 @@ const RecentPostsCard = () => {
   );
 };
 
-const TopUsersCard = ({ users }) => (
-  <div className="card admin-list-card">
+const TopUsersCard = ({ users, onViewAll }) => (
+  <div className="admin-card">
     <div className="admin-card-header">
       <div>
-        <h3>Top users</h3>
+        <h3>Top Users</h3>
         <p>Most followed creators</p>
       </div>
-      <span className="admin-card-badge" style={{ color: COLORS.stories }}>
-        <FontAwesomeIcon icon={faFire} style={{ fontSize: 13 }} />
-      </span>
+      <button className="admin-view-all" onClick={onViewAll}>View all</button>
     </div>
 
     {!users ? (
-      <div className="admin-list-skeleton">
-        <div className="skeleton" />
-        <div className="skeleton" />
-        <div className="skeleton" />
-      </div>
+      <ListSkeleton />
     ) : users.length === 0 ? (
       <EmptyState icon={faFire} title="No followers yet" text="Creators with the most followers will be listed here." />
     ) : (
@@ -408,35 +410,41 @@ const TopUsersCard = ({ users }) => (
   </div>
 );
 
-const QuickActions = ({ onManageUsers, onExport, exporting, exportError }) => (
-  <div className="card admin-side-card">
+const QuickActions = ({ onManageUsers, onExport, exporting, exportError, onRefresh }) => (
+  <div className="admin-card">
     <div className="admin-card-header">
       <div>
-        <h3>Quick actions</h3>
-        <p>Common admin tasks</p>
+        <h3>Quick Actions</h3>
       </div>
     </div>
     <div className="admin-quick-list">
-      <button className="admin-quick-action manage" onClick={onManageUsers}>
+      <button className="admin-quick-action shade-1" onClick={onManageUsers}>
         <span className="admin-quick-icon">
-          <FontAwesomeIcon icon={faUsers} style={{ fontSize: 15 }} />
+          <FontAwesomeIcon icon={faUsers} style={{ fontSize: 14 }} />
         </span>
-        <span className="admin-quick-text">Manage users</span>
-        <FontAwesomeIcon icon={faChevronRight} style={{ fontSize: 12 }} className="admin-quick-arrow" />
+        <span className="admin-quick-text">Manage Users</span>
+        <FontAwesomeIcon icon={faArrowRight} style={{ fontSize: 13 }} />
       </button>
-      <button className="admin-quick-action export" onClick={onExport} disabled={exporting}>
+      <button className="admin-quick-action shade-2" onClick={onExport} disabled={exporting}>
         <span className="admin-quick-icon">
           <FontAwesomeIcon icon={faDownload} style={{ fontSize: 14 }} />
         </span>
-        <span className="admin-quick-text">{exporting ? 'Exporting...' : 'Export user list (CSV)'}</span>
-        <FontAwesomeIcon icon={faChevronRight} style={{ fontSize: 12 }} className="admin-quick-arrow" />
+        <span className="admin-quick-text">{exporting ? 'Exporting...' : 'Export Users CSV'}</span>
+        <FontAwesomeIcon icon={faArrowRight} style={{ fontSize: 13 }} />
+      </button>
+      <button className="admin-quick-action shade-3" onClick={onRefresh}>
+        <span className="admin-quick-icon">
+          <FontAwesomeIcon icon={faArrowRotateRight} style={{ fontSize: 14 }} />
+        </span>
+        <span className="admin-quick-text">Refresh Dashboard</span>
+        <FontAwesomeIcon icon={faArrowRight} style={{ fontSize: 13 }} />
       </button>
     </div>
     {exportError && <p className="admin-export-error">{exportError}</p>}
   </div>
 );
 
-const RecentSignupsCard = () => {
+const RecentSignupsCard = ({ refreshKey, onViewAll }) => {
   const [users, setUsers] = useState(null);
   const [error, setError] = useState('');
 
@@ -445,7 +453,10 @@ const RecentSignupsCard = () => {
     api
       .get('/admin/users', { params: { page: 1, limit: 5 } })
       .then((res) => {
-        if (!ignore) setUsers(res.data.data);
+        if (!ignore) {
+          setError('');
+          setUsers(res.data.data);
+        }
       })
       .catch((err) => {
         console.error('Failed to load recent signups:', err);
@@ -454,40 +465,35 @@ const RecentSignupsCard = () => {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [refreshKey]);
 
   return (
-    <div className="card admin-side-card">
+    <div className="admin-card">
       <div className="admin-card-header">
         <div>
-          <h3>Recent signups</h3>
-          <p>Newest accounts first</p>
+          <h3>Recent Signups</h3>
         </div>
+        <button className="admin-view-all" onClick={onViewAll}>View all</button>
       </div>
 
       {error ? (
         <EmptyState icon={faUsers} title={error} />
       ) : !users ? (
-        <div className="admin-list-skeleton">
-          <div className="skeleton" />
-          <div className="skeleton" />
-          <div className="skeleton" />
-        </div>
+        <ListSkeleton />
       ) : users.length === 0 ? (
         <EmptyState icon={faUsers} title="No signups yet" />
       ) : (
-        <ul className="admin-signup-list">
+        <ul className="admin-activity-list">
           {users.map((user) => (
-            <li key={user._id} className="admin-signup-item">
-              <img
-                src={getAvatarUrl(user.avatar, user.username)}
-                alt={user.username}
-                className="admin-signup-avatar"
-              />
-              <div className="admin-signup-info">
-                <span className="admin-signup-name">@{user.username}</span>
-                <span className="admin-signup-time">{timeAgo(user.createdAt)}</span>
+            <li key={user._id} className="admin-activity-item">
+              <span className="admin-activity-icon">
+                <FontAwesomeIcon icon={faUserPlus} style={{ fontSize: 14 }} />
+              </span>
+              <div className="admin-activity-info">
+                <span className="admin-activity-title">New user registered</span>
+                <span className="admin-activity-sub">@{user.username}</span>
               </div>
+              <span className="admin-activity-time">{timeAgo(user.createdAt)}</span>
             </li>
           ))}
         </ul>
@@ -497,23 +503,16 @@ const RecentSignupsCard = () => {
 };
 
 const TrendingCard = ({ tags }) => (
-  <div className="card admin-side-card">
+  <div className="admin-card">
     <div className="admin-card-header">
       <div>
-        <h3>Trending hashtags</h3>
+        <h3>Trending Hashtags</h3>
         <p>Last 30 days</p>
       </div>
-      <span className="admin-card-badge" style={{ color: COLORS.comments }}>
-        <FontAwesomeIcon icon={faHashtag} style={{ fontSize: 13 }} />
-      </span>
     </div>
 
     {!tags ? (
-      <div className="admin-list-skeleton">
-        <div className="skeleton" />
-        <div className="skeleton" />
-        <div className="skeleton" />
-      </div>
+      <ListSkeleton />
     ) : tags.length === 0 ? (
       <EmptyState icon={faHashtag} title="No hashtags yet" text="Tags from the last 30 days will appear here." />
     ) : (
@@ -522,7 +521,7 @@ const TrendingCard = ({ tags }) => (
           <li key={item.tag} className="admin-rank-item">
             <span className="admin-rank-number">{index + 1}</span>
             <span className="admin-rank-name">#{item.tag}</span>
-            <span className="admin-rank-count">{item.count.toLocaleString()}</span>
+            <span className="admin-rank-count">{item.count.toLocaleString()} posts</span>
           </li>
         ))}
       </ol>
@@ -553,7 +552,7 @@ const Overview = ({ onManageUsers }) => {
     };
   }, [reloadKey]);
 
-  const retry = () => {
+  const refresh = () => {
     setError('');
     setStats(null);
     setReloadKey((key) => key + 1);
@@ -580,9 +579,9 @@ const Overview = ({ onManageUsers }) => {
 
   if (error) {
     return (
-      <div className="card admin-error">
+      <div className="admin-card admin-error">
         <p>{error}</p>
-        <button className="btn btn-secondary" onClick={retry}>Try again</button>
+        <button className="btn btn-secondary" onClick={refresh}>Try again</button>
       </div>
     );
   }
@@ -596,42 +595,42 @@ const Overview = ({ onManageUsers }) => {
         <div className="admin-stat-grid">
           <StatCard
             icon={faUsers}
-            label="Total users"
+            label="Total Users"
             value={stats ? stats.totals.users : null}
             tone="tone-violet"
-            trend={stats ? trendOf(usersThisWeek, stats.previousWeek.users) : undefined}
+            trend={stats ? trendOf(usersThisWeek, stats.previousWeek.users) : null}
           />
           <StatCard
             icon={faImage}
-            label="Total posts"
+            label="Total Posts"
             value={stats ? stats.totals.posts : null}
             tone="tone-blue"
-            trend={stats ? trendOf(postsThisWeek, stats.previousWeek.posts) : undefined}
+            trend={stats ? trendOf(postsThisWeek, stats.previousWeek.posts) : null}
           />
           <StatCard
             icon={faComment}
-            label="Total comments"
+            label="Total Comments"
             value={stats ? stats.totals.comments : null}
             tone="tone-pink"
             footnote="All time"
           />
           <StatCard
             icon={faLayerGroup}
-            label="Active stories"
+            label="Active Stories"
             value={stats ? stats.totals.stories : null}
-            tone="tone-amber"
-            footnote="Live right now"
+            tone="tone-teal"
+            footnote="Live in the last 24 hours"
           />
         </div>
 
-        <div className="admin-row admin-row-split">
+        <div className="admin-row admin-row-chart">
           <UserGrowthChart data={stats ? stats.newUsersByDay : null} />
           <AccountsDonut verified={stats ? stats.totals.verified : null} total={stats ? stats.totals.users : 0} />
         </div>
 
-        <div className="admin-row admin-row-split">
-          <RecentPostsCard />
-          <TopUsersCard users={stats ? stats.topFollowed : null} />
+        <div className="admin-row admin-row-bottom">
+          <RecentPostsCard refreshKey={reloadKey} />
+          <TopUsersCard users={stats ? stats.topFollowed : null} onViewAll={onManageUsers} />
         </div>
       </div>
 
@@ -641,8 +640,9 @@ const Overview = ({ onManageUsers }) => {
           onExport={exportUsers}
           exporting={exporting}
           exportError={exportError}
+          onRefresh={refresh}
         />
-        <RecentSignupsCard />
+        <RecentSignupsCard refreshKey={reloadKey} onViewAll={onManageUsers} />
         <TrendingCard tags={stats ? stats.trendingTags : null} />
       </aside>
     </div>
@@ -717,7 +717,7 @@ const UsersSection = () => {
   const totalPages = Math.max(1, Math.ceil(pagination.total / PAGE_SIZE));
 
   return (
-    <div className="card admin-users-card">
+    <div className="admin-card admin-users-card">
       <div className="admin-users-toolbar">
         <div className="admin-search">
           <FontAwesomeIcon icon={faMagnifyingGlass} style={{ fontSize: 15 }} className="admin-search-icon" />
@@ -749,11 +749,11 @@ const UsersSection = () => {
           <table className="admin-table">
             <thead>
               <tr>
-                <th className="admin-col-user">User</th>
-                <th className="admin-col-joined">Joined</th>
+                <th>User</th>
+                <th>Joined</th>
                 <th className="admin-col-num">Posts</th>
                 <th className="admin-col-num">Followers</th>
-                <th className="admin-col-status">Status</th>
+                <th>Status</th>
                 <th className="admin-actions-col">Actions</th>
               </tr>
             </thead>
@@ -802,8 +802,8 @@ const UsersSection = () => {
                         </div>
                       </td>
                       <td className="admin-cell-joined">{formatDate(user.createdAt)}</td>
-                      <td className="admin-cell-num">{user.postsCount.toLocaleString()}</td>
-                      <td className="admin-cell-num">{user.followersCount.toLocaleString()}</td>
+                      <td className="admin-col-num">{user.postsCount.toLocaleString()}</td>
+                      <td className="admin-col-num">{user.followersCount.toLocaleString()}</td>
                       <td>
                         <div className="admin-badges">
                           {isAdmin && <span className="admin-badge admin">Admin</span>}
@@ -862,16 +862,18 @@ const UsersSection = () => {
 };
 
 const SECTIONS = [
-  { id: 'overview', label: 'Overview', icon: faGauge, subtitle: 'Platform activity at a glance' },
-  { id: 'users', label: 'Users', icon: faUsers, subtitle: 'Search, verify and manage accounts' },
+  { id: 'overview', label: 'Dashboard', icon: faHouse, subtitle: "Here's what's happening with your platform today." },
+  { id: 'users', label: 'Users', icon: faUsers, subtitle: 'Search, verify and manage accounts.' },
 ];
 
 const Admin = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [activeSection, setActiveSection] = useState('overview');
   const current = SECTIONS.find((section) => section.id === activeSection);
-  const today = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
+  const today = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  const firstName = (user?.fullName || 'Admin').split(' ')[0];
 
   const handleLogout = () => {
     logout();
@@ -883,12 +885,9 @@ const Admin = () => {
       <aside className="admin-sidebar">
         <div className="admin-brand">
           <span className="admin-brand-badge">
-            <FontAwesomeIcon icon={faWandMagicSparkles} style={{ fontSize: 16 }} />
+            <FontAwesomeIcon icon={faWandMagicSparkles} style={{ fontSize: 18 }} />
           </span>
-          <div className="admin-brand-text">
-            <span className="admin-brand-name">Vibely</span>
-            <span className="admin-brand-sub">Admin console</span>
-          </div>
+          <span className="admin-brand-name">Vibely</span>
         </div>
 
         <nav className="admin-nav">
@@ -898,44 +897,72 @@ const Admin = () => {
               className={`admin-nav-item ${activeSection === section.id ? 'active' : ''}`}
               onClick={() => setActiveSection(section.id)}
             >
-              <FontAwesomeIcon icon={section.icon} style={{ fontSize: 16 }} />
+              <FontAwesomeIcon icon={section.icon} style={{ fontSize: 17 }} />
               <span>{section.label}</span>
             </button>
           ))}
         </nav>
 
         <div className="admin-quick-links">
-          <span className="admin-quick-links-title">Quick links</span>
+          <span className="admin-quick-links-title">Quick Links</span>
           <button className="admin-link-item" onClick={() => setActiveSection('users')}>
-            <FontAwesomeIcon icon={faMagnifyingGlass} style={{ fontSize: 13 }} />
+            <FontAwesomeIcon icon={faMagnifyingGlass} style={{ fontSize: 14 }} />
             <span>Find an account</span>
+          </button>
+          <button className="admin-link-item" onClick={toggleTheme}>
+            <FontAwesomeIcon icon={theme === 'dark' ? faSun : faMoon} style={{ fontSize: 14 }} />
+            <span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
           </button>
         </div>
 
-        <button className="admin-logout-btn" onClick={handleLogout}>
-          <FontAwesomeIcon icon={faRightFromBracket} style={{ fontSize: 14 }} />
-          <span>Log out</span>
-        </button>
+        <div className="admin-sidebar-profile">
+          <img src={getAvatarUrl(user?.avatar, user?.fullName)} alt="" className="admin-profile-avatar" />
+          <div className="admin-profile-info">
+            <span className="admin-profile-name">{user?.fullName || 'Admin'}</span>
+            <span className="admin-profile-role">Administrator</span>
+          </div>
+          <button className="admin-logout-btn" onClick={handleLogout} title="Log out" aria-label="Log out">
+            <FontAwesomeIcon icon={faRightFromBracket} style={{ fontSize: 15 }} />
+          </button>
+        </div>
       </aside>
 
-      <main className="admin-main">
+      <div className="admin-content">
         <header className="admin-topbar">
-          <div>
-            <h1>Welcome back, {user?.fullName || 'Admin'}</h1>
-            <p>{current.subtitle}</p>
+          <span className="admin-topbar-title">{current.label}</span>
+          <div className="admin-topbar-actions">
+            <button className="admin-icon-btn" onClick={toggleTheme} aria-label="Toggle theme">
+              <FontAwesomeIcon icon={theme === 'dark' ? faSun : faMoon} style={{ fontSize: 16 }} />
+            </button>
+            <div className="admin-topbar-user">
+              <img src={getAvatarUrl(user?.avatar, user?.fullName)} alt="" className="admin-topbar-avatar" />
+              <div className="admin-topbar-user-info">
+                <span className="admin-topbar-name">{user?.fullName || 'Admin'}</span>
+                <span className="admin-topbar-role">Admin</span>
+              </div>
+            </div>
           </div>
-          <span className="admin-header-date">
-            <FontAwesomeIcon icon={faCalendarDays} style={{ fontSize: 13 }} />
-            {today}
-          </span>
         </header>
 
-        {activeSection === 'overview' ? (
-          <Overview onManageUsers={() => setActiveSection('users')} />
-        ) : (
-          <UsersSection />
-        )}
-      </main>
+        <main className="admin-main">
+          <div className="admin-welcome">
+            <div>
+              <h1>{activeSection === 'overview' ? `Welcome back, ${firstName}` : current.label}</h1>
+              <p>{current.subtitle}</p>
+            </div>
+            <span className="admin-header-date">
+              {today}
+              <FontAwesomeIcon icon={faCalendarDays} style={{ fontSize: 16 }} />
+            </span>
+          </div>
+
+          {activeSection === 'overview' ? (
+            <Overview onManageUsers={() => setActiveSection('users')} />
+          ) : (
+            <UsersSection />
+          )}
+        </main>
+      </div>
     </div>
   );
 };
