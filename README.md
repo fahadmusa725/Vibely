@@ -11,11 +11,12 @@ Vibely is a minimal, Instagram-style social media app built with the MERN stack.
 - Likes, threaded comments with pinning, and a post detail view
 - 24-hour stories with a viewer
 - Live user search and suggested creators
+- Admin dashboard for a single fixed admin account, with platform stats, charts and user management
 - Light and dark theme, responsive layout with mobile navigation
 
 ## Tech Stack
 
-- **Frontend:** React 18, Vite, React Router, Axios, Lucide icons, plain CSS
+- **Frontend:** React 19, Vite, React Router, Axios, Font Awesome icons, Recharts, plain CSS
 - **Backend:** Node.js, Express, MongoDB, Mongoose, Multer, Cloudinary, JSON Web Tokens, bcryptjs
 
 ## Local Setup
@@ -44,6 +45,12 @@ CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 CLIENT_URL=http://localhost:5173
 NODE_ENV=development
+EMAIL_SERVICE=gmail
+EMAIL_USER=your_email@example.com
+EMAIL_PASS=your_email_app_password
+EMAIL_FROM=Vibely <your_email@example.com>
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=your_admin_password
 ```
 
 The server exits on startup if `JWT_SECRET` is not set.

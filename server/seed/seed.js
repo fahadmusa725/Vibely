@@ -340,7 +340,7 @@ const seedRichData = async () => {
       },
       {
         author: users[6]._id,
-        caption: 'Morning mist in the greenhouse! The new Philodendron billietiae leaf unfurled with incredible orange petioles. Nature’s gradient game is undefeated. #photography #wellness #urbanjungle',
+        caption: 'Morning mist in the greenhouse! The new Philodendron billietiae leaf unfurled with incredible orange petioles. Nature\'s gradient game is undefeated. #photography #wellness #urbanjungle',
         images: [
           { url: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1080&auto=format&fit=crop&q=80' }
         ],
@@ -412,7 +412,7 @@ const seedRichData = async () => {
       },
       {
         author: users[14]._id,
-        caption: 'Tonight’s signature amuse-bouche: Charcoal-grilled wild octopus with fermented smoked paprika emulsion and pickled sea fennel. Pure coastal Portuguese heritage. #food #photography #gastronomy',
+        caption: 'Tonight\'s signature amuse-bouche: Charcoal-grilled wild octopus with fermented smoked paprika emulsion and pickled sea fennel. Pure coastal Portuguese heritage. #food #photography #gastronomy',
         images: [
           { url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1080&auto=format&fit=crop&q=80' }
         ],

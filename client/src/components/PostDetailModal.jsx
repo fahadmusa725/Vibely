@@ -521,7 +521,9 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
                   <div className="reply-indicator">
                     <FontAwesomeIcon icon={faReply} style={{ fontSize: 12 }} />
                     <span>Replying to <strong>@{replyingTo.username}</strong></span>
-                    <button type="button" className="cancel-reply-btn" onClick={cancelReply}>×</button>
+                    <button type="button" className="cancel-reply-btn" onClick={cancelReply}>
+                      <FontAwesomeIcon icon={faXmark} style={{ fontSize: 12 }} />
+                    </button>
                   </div>
                 )}
                 <div className="detail-comment-input-row">
