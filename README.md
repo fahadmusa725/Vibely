@@ -90,6 +90,7 @@ All routes are prefixed with `/api`. Endpoints marked `(auth)` require an `Autho
 - `GET /me`: Current user (auth)
 - `POST /forgot-password`: Request a password reset
 - `POST /reset-password/:token`: Set a new password
+- `PUT /change-password`: Change password with the current password (auth)
 
 **Users** (`/api/users`)
 

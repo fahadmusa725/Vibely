@@ -314,37 +314,22 @@
   font-weight: 700;
 }
 
-.settings-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 48px 24px;
-  gap: 12px;
-  color: var(--text-secondary);
+.settings-password-wrap {
+  position: relative;
 }
 
-.settings-placeholder-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--bg-subtle);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.settings-password-wrap .input {
+  padding-right: 44px;
+}
+
+.settings-password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
   color: var(--text-tertiary);
-  margin-bottom: 8px;
-}
-
-.settings-placeholder h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.settings-placeholder p {
-  color: var(--text-tertiary);
-  font-size: 0.9rem;
-  max-width: 280px;
+  cursor: pointer;
+  padding: 4px;
 }

@@ -155,20 +155,6 @@
   gap: 6px;
 }
 
-.ls-footer-links {
-  font-size: 0.78rem;
-  color: var(--text-tertiary);
-}
-
-.ls-footer-links span {
-  cursor: pointer;
-}
-
-.ls-footer-links span:hover {
-  color: var(--text-secondary);
-  text-decoration: underline;
-}
-
 .ls-copyright {
   font-size: 0.75rem;
   color: var(--text-tertiary);

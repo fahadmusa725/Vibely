@@ -144,3 +144,7 @@
 .story-nav-area.right {
   right: 0;
 }
+
+.story-viewer-user {
+  cursor: pointer;
+}

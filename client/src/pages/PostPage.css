@@ -1,3 +1,104 @@
+.post-page {
+  width: 100%;
+  padding: 16px 12px 80px;
+}
+
+.post-page-column {
+  max-width: 620px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.post-page-header {
+  display: flex;
+  align-items: center;
+}
+
+.post-page-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.post-page-back:hover {
+  color: var(--text-primary);
+}
+
+.post-page-comments {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.post-page-comments-title {
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.post-page-comment {
+  display: flex;
+  gap: 10px;
+}
+
+.post-page-comment.reply {
+  margin-left: 42px;
+}
+
+.post-page-comment-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.post-page-comment-body p {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.post-page-comment-time {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.post-page-empty {
+  font-size: 0.9rem;
+  color: var(--text-tertiary);
+  text-align: center;
+  padding: 12px 0;
+}
+
+.post-page-comment-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 14px;
+}
+
+.post-page-comment-input {
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: var(--radius-full, 9999px);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
 .post-page-state {
   display: flex;
   flex-direction: column;

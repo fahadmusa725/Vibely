@@ -9,7 +9,7 @@ import api from '../services/api';
 import { getAvatarUrl } from '../utils/avatar';
 import './Profile.css';
 
-const Profile = () => {
+const Profile = ({ onOpenCreateModal, refreshKey }) => {
   const { username } = useParams();
   const { user: currentUser, updateUser } = useAuth();
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const Profile = () => {
 
   useEffect(() => {
     fetchProfile();
-  }, [username]);
+  }, [username, refreshKey]);
 
   const fetchProfile = async () => {
     setLoading(true);
@@ -71,11 +71,7 @@ const Profile = () => {
     try {
       const res = await api.get(`/users/${profileUser._id}/${type}`);
       if (res.data.success) {
-        const users = (res.data.data || []).map((u) => ({
-          ...u,
-          isFollowing: currentUser?.following?.includes(u._id) || false,
-        }));
-        setFollowUsersList(users);
+        setFollowUsersList(res.data.data || []);
       }
     } catch (err) {
       console.error(`Failed to fetch ${type}:`, err);
@@ -106,7 +102,8 @@ const Profile = () => {
     }
 
     try {
-      await api.post(`/users/${targetUser._id}/follow`);
+      const res = await api.post(`/users/${targetUser._id}/follow`);
+      updateUser({ followingCount: res.data.followingCount });
     } catch (err) {
       console.error('Failed to toggle follow in modal:', err);
       setFollowUsersList((prev) =>
@@ -129,7 +126,8 @@ const Profile = () => {
     }));
 
     try {
-      await api.post(`/users/${profileUser._id}/follow`);
+      const res = await api.post(`/users/${profileUser._id}/follow`);
+      updateUser({ followingCount: res.data.followingCount });
     } catch (err) {
       setIsFollowing(!nextState);
       setProfileUser((prev) => ({
@@ -393,6 +391,11 @@ const Profile = () => {
           <div className="card profile-empty-posts">
             <FontAwesomeIcon icon={faTableCellsLarge} style={{ fontSize: 36 }} className="empty-icon" />
             <h3>No Posts Yet</h3>
+            {isOwnProfile && (
+              <button className="btn btn-primary" onClick={onOpenCreateModal}>
+                Share your first post
+              </button>
+            )}
           </div>
         )}
       </div>

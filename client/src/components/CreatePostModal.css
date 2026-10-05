@@ -393,12 +393,6 @@
 .photo-add { color: #45bd62; }
 .photo-add:hover { background: rgba(69,189,98,0.12); }
 
-.tag-add { color: #f7b928; }
-.tag-add:hover { background: rgba(247,185,40,0.12); }
-
-.feeling-add { color: #f56040; }
-.feeling-add:hover { background: rgba(245,96,64,0.12); }
-
 .location-add { color: var(--accent-primary); }
 .location-add:hover { background: var(--accent-light); }
 
@@ -407,3 +401,7 @@
   cursor: not-allowed;
 }
 
+.create-modal-body.drag-active {
+  outline: 2px dashed var(--accent-primary);
+  outline-offset: -8px;
+}

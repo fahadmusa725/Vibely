@@ -29,8 +29,8 @@ router.get('/suggested', optionalAuth, getSuggestedUsers);
 router.put('/profile', protect, updateProfile);
 router.put('/media', protect, upload.single('image'), updateUserMedia);
 router.post('/:id/follow', protect, toggleFollow);
-router.get('/:id/followers', getFollowers);
-router.get('/:id/following', getFollowing);
+router.get('/:id/followers', optionalAuth, getFollowers);
+router.get('/:id/following', optionalAuth, getFollowing);
 router.get('/:username', optionalAuth, getUserProfile);
 
 module.exports = router;

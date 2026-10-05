@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowsRotate, faCompass, faFaceSmile, faImage, faLocationDot, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate, faCompass, faImage, faLocationDot, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import PostCard from '../components/PostCard';
 import PostDetailModal from '../components/PostDetailModal';
@@ -10,8 +10,8 @@ import StoriesTray from '../components/stories/StoriesTray';
 import api from '../services/api';
 import './Feed.css';
 
-const Feed = ({ onOpenCreateModal }) => {
-  const { user } = useAuth();
+const Feed = ({ onOpenCreateModal, refreshKey }) => {
+  const { user, updateUser } = useAuth();
   const navigate = useNavigate();
 
   const [posts, setPosts] = useState([]);
@@ -28,7 +28,7 @@ const Feed = ({ onOpenCreateModal }) => {
 
     fetchFeed(1);
     fetchSuggested();
-  }, []);
+  }, [refreshKey]);
 
   const fetchFeed = async (pageNum = 1) => {
     if (pageNum === 1) setLoading(true);
@@ -66,7 +66,8 @@ const Feed = ({ onOpenCreateModal }) => {
 
   const handleFollowToggle = async (userId) => {
     try {
-      await api.post(`/users/${userId}/follow`);
+      const res = await api.post(`/users/${userId}/follow`);
+      updateUser({ followingCount: res.data.followingCount });
       setSuggestedUsers((prev) => prev.filter((u) => u._id !== userId));
       fetchFeed(1);
     } catch (err) {
@@ -104,15 +105,7 @@ const Feed = ({ onOpenCreateModal }) => {
               onClick={onOpenCreateModal}
             >
               <FontAwesomeIcon icon={faImage} style={{ fontSize: 18 }} className="c-icon photo-icon" />
-              <span>Photo/Video</span>
-            </button>
-
-            <button
-              className="composer-action-btn"
-              onClick={onOpenCreateModal}
-            >
-              <FontAwesomeIcon icon={faFaceSmile} style={{ fontSize: 18 }} className="c-icon feeling-icon" />
-              <span>Feeling</span>
+              <span>Photo</span>
             </button>
 
             <button

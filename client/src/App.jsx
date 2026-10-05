@@ -25,6 +25,7 @@ const isThreeColPath = (pathname) => {
 
 function AppContent() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [feedRefreshKey, setFeedRefreshKey] = useState(0);
   const location = useLocation();
   const { isAuthenticated, loading } = useAuth();
 
@@ -48,19 +49,19 @@ function AppContent() {
 
   return (
     <div className="app-container">
-      <Navbar onOpenCreateModal={() => setIsCreateModalOpen(true)} />
+      <Navbar />
 
       <main className="app-main-viewport">
         {useThreeCol ? (
           <div className="three-col-shell">
             <aside className="app-left-sidebar">
-              <LeftSidebar onOpenCreateModal={() => setIsCreateModalOpen(true)} />
+              <LeftSidebar />
             </aside>
 
             <Routes>
               <Route
                 path="/"
-                element={<Feed onOpenCreateModal={() => setIsCreateModalOpen(true)} />}
+                element={<Feed onOpenCreateModal={() => setIsCreateModalOpen(true)} refreshKey={feedRefreshKey} />}
               />
               <Route path="/explore" element={<Explore />} />
             </Routes>
@@ -71,7 +72,10 @@ function AppContent() {
             <Route path="/search" element={<Search />} />
             <Route path="/saved" element={<Saved />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/profile/:username" element={<Profile />} />
+            <Route
+              path="/profile/:username"
+              element={<Profile onOpenCreateModal={() => setIsCreateModalOpen(true)} refreshKey={feedRefreshKey} />}
+            />
             <Route path="/post/:id" element={<PostPage />} />
             <Route path="/login" element={<Auth mode="login" />} />
             <Route path="/register" element={<Auth mode="register" />} />
@@ -87,9 +91,7 @@ function AppContent() {
       <CreatePostModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
-        onPostCreated={() => {
-          window.location.reload();
-        }}
+        onPostCreated={() => setFeedRefreshKey((key) => key + 1)}
       />
     </div>
   );

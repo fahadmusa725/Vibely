@@ -154,3 +154,15 @@
   gap: 12px;
   border-radius: var(--radius-xl);
 }
+
+@media (min-width: 900px) {
+  .search-page-container {
+    max-width: 960px;
+  }
+
+  .users-results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+}

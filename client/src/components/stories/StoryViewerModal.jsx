@@ -3,11 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { getAvatarUrl } from '../../utils/avatar';
 import './StoryViewerModal.css';
 
 const StoryViewerModal = ({ groups, initialGroupIndex, onClose }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [groupIndex, setGroupIndex] = useState(initialGroupIndex);
   const [storyIndex, setStoryIndex] = useState(0);
 
@@ -19,6 +21,12 @@ const StoryViewerModal = ({ groups, initialGroupIndex, onClose }) => {
     await viewRequest.current;
     onClose();
   }, [onClose]);
+
+  const openSenderProfile = (e) => {
+    e.stopPropagation();
+    closeViewer();
+    navigate(`/profile/${currentGroup.user.username}`);
+  };
 
   useEffect(() => {
     if (currentStory && !currentStory.isSeen) {
@@ -95,7 +103,7 @@ const StoryViewerModal = ({ groups, initialGroupIndex, onClose }) => {
         </div>
 
         <div className="story-viewer-header">
-          <div className="story-viewer-user">
+          <div className="story-viewer-user" onClick={openSenderProfile}>
             <img
               src={getAvatarUrl(currentGroup.user.avatar, currentGroup.user.fullName)}
               alt={currentGroup.user.username}

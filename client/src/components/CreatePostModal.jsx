@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faChevronLeft, faChevronRight, faFaceSmile, faGlobe, faHashtag, faImage, faLocationDot, faSpinner, faTag, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faChevronLeft, faChevronRight, faGlobe, faHashtag, faImage, faLocationDot, faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './CreatePostModal.css';
@@ -18,25 +18,52 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
+  const locationInputRef = useRef(null);
 
   if (!isOpen) return null;
 
-  const handleImageSelect = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    if (selectedFiles.length === 0) return;
+  const addFiles = (files) => {
+    if (files.length === 0) return;
 
-    if (images.length + selectedFiles.length > 10) {
+    const imageFiles = files.filter((file) => file.type.startsWith('image/'));
+    if (imageFiles.length === 0) {
+      setError('Only image files can be added.');
+      return;
+    }
+
+    if (images.length + imageFiles.length > 10) {
       setError('You can upload a maximum of 10 images per post.');
       return;
     }
 
     setError('');
-    const newImages = [...images, ...selectedFiles];
-    setImages(newImages);
+    setImages([...images, ...imageFiles]);
+    setPreviewUrls((prev) => [...prev, ...imageFiles.map((file) => URL.createObjectURL(file))]);
+  };
 
-    const newPreviews = selectedFiles.map((file) => URL.createObjectURL(file));
-    setPreviewUrls((prev) => [...prev, ...newPreviews]);
+  const handleImageSelect = (e) => {
+    addFiles(Array.from(e.target.files));
+  };
+
+  const handleDragOver = (e) => {
+    if (step !== 1) return;
+    e.preventDefault();
+    setDragActive(true);
+  };
+
+  const handleDragLeave = (e) => {
+    if (step !== 1) return;
+    e.preventDefault();
+    setDragActive(false);
+  };
+
+  const handleDrop = (e) => {
+    if (step !== 1) return;
+    e.preventDefault();
+    setDragActive(false);
+    addFiles(Array.from(e.dataTransfer.files));
   };
 
   const handleRemoveImage = (index) => {
@@ -119,7 +146,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
           )}
 
           <h3 className="create-modal-title">
-            {step === 1 ? 'Create new post' : 'Crop & details'}
+            {step === 1 ? 'Create new post' : 'Details'}
           </h3>
 
           {previewUrls.length > 0 ? (
@@ -148,7 +175,12 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
 
         {error && <div className="create-modal-error">{error}</div>}
 
-        <div className="create-modal-body">
+        <div
+          className={`create-modal-body ${dragActive ? 'drag-active' : ''}`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
           {step === 1 ? (
             previewUrls.length === 0 ? (
               <div
@@ -156,9 +188,9 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
                 onClick={() => fileInputRef.current?.click()}
               >
                 <div className="dropzone-icon-ring">
-                  <FontAwesomeIcon icon={faImage} style={{ fontSize: 48, color: '#0095f6' }} />
+                  <FontAwesomeIcon icon={faImage} style={{ fontSize: 48, color: 'var(--accent-primary)' }} />
                 </div>
-                <h4>Drag photos and videos here</h4>
+                <h4>Drag photos here</h4>
                 <p>Support JPG, PNG, WEBP up to 10MB each</p>
                 <button type="button" className="btn btn-primary select-computer-btn">
                   Select from computer
@@ -206,7 +238,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
                       type="button"
                       className={`ratio-btn ${aspectRatio === '4/5' ? 'active' : ''}`}
                       onClick={() => setAspectRatio('4/5')}
-                      title="Portrait 4:5 ratio"
+                      title="Preview at 4:5"
                     >
                       4:5
                     </button>
@@ -214,7 +246,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
                       type="button"
                       className={`ratio-btn ${aspectRatio === '1/1' ? 'active' : ''}`}
                       onClick={() => setAspectRatio('1/1')}
-                      title="Square 1:1 ratio"
+                      title="Preview at 1:1"
                     >
                       1:1
                     </button>
@@ -309,6 +341,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
                   <input
                     type="text"
                     placeholder="Add location"
+                    ref={locationInputRef}
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     className="details-field-input"
@@ -332,13 +365,7 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
                     <button type="button" className="add-icon-btn photo-add" title="Add more photos" onClick={() => fileInputRef.current?.click()}>
                       <FontAwesomeIcon icon={faImage} style={{ fontSize: 20 }} />
                     </button>
-                    <button type="button" className="add-icon-btn tag-add" title="Tag people">
-                      <FontAwesomeIcon icon={faTag} style={{ fontSize: 20 }} />
-                    </button>
-                    <button type="button" className="add-icon-btn feeling-add" title="Add feeling">
-                      <FontAwesomeIcon icon={faFaceSmile} style={{ fontSize: 20 }} />
-                    </button>
-                    <button type="button" className="add-icon-btn location-add" title="Add location">
+                    <button type="button" className="add-icon-btn location-add" title="Add location" onClick={() => locationInputRef.current?.focus()}>
                       <FontAwesomeIcon icon={faLocationDot} style={{ fontSize: 20 }} />
                     </button>
                   </div>

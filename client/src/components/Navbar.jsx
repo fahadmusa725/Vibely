@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import './Navbar.css';
 
-const Navbar = ({ onOpenCreateModal }) => {
+const Navbar = () => {
   const { user, logout, isAuthenticated, unreadCount } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();

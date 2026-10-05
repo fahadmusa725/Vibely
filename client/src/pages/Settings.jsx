@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faBell, faChevronRight, faFloppyDisk, faGear, faLock, faPalette, faShield, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faCheck, faChevronRight, faEye, faEyeSlash, faFloppyDisk, faGear, faLock, faPalette, faUser } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import api from '../services/api';
@@ -9,21 +9,122 @@ import './Settings.css';
 
 const SECTIONS = [
   { id: 'profile', label: 'Edit Profile', icon: faUser },
-  { id: 'privacy', label: 'Privacy', icon: faShield },
-  { id: 'notifications', label: 'Notifications', icon: faBell },
   { id: 'appearance', label: 'Appearance', icon: faPalette },
-  { id: 'security', label: 'Security', icon: faLock },
+  { id: 'security', label: 'Change Password', icon: faLock },
 ];
 
-const PlaceholderPanel = ({ label }) => (
-  <div className="settings-placeholder">
-    <div className="settings-placeholder-icon">
-      <FontAwesomeIcon icon={faGear} style={{ fontSize: 32 }} />
-    </div>
-    <h3>{label}</h3>
-    <p>This section is coming soon. Stay tuned for updates.</p>
-  </div>
-);
+const ChangePasswordPanel = () => {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSuccess(false);
+    setError('');
+
+    if (newPassword.length < 6) {
+      setError('New password must be at least 6 characters.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setError('New passwords do not match.');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const res = await api.put('/auth/change-password', { currentPassword, newPassword });
+      if (res.data.success) {
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setSuccess(true);
+        setTimeout(() => setSuccess(false), 3000);
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Could not change password. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <form className="settings-form" onSubmit={handleSubmit}>
+      <h2 className="settings-section-title">Change Password</h2>
+      <p className="settings-section-desc">Use at least 6 characters for your new password.</p>
+
+      <div className="settings-field">
+        <label htmlFor="settings-current-password">Current password</label>
+        <div className="settings-password-wrap">
+          <input
+            id="settings-current-password"
+            type={showCurrent ? 'text' : 'password'}
+            className="input"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            autoComplete="current-password"
+          />
+          <button type="button" className="settings-password-toggle" onClick={() => setShowCurrent((prev) => !prev)} aria-label="Toggle current password visibility">
+            <FontAwesomeIcon icon={showCurrent ? faEyeSlash : faEye} style={{ fontSize: 16 }} />
+          </button>
+        </div>
+      </div>
+
+      <div className="settings-field">
+        <label htmlFor="settings-new-password">New password</label>
+        <div className="settings-password-wrap">
+          <input
+            id="settings-new-password"
+            type={showNew ? 'text' : 'password'}
+            className="input"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            autoComplete="new-password"
+          />
+          <button type="button" className="settings-password-toggle" onClick={() => setShowNew((prev) => !prev)} aria-label="Toggle new password visibility">
+            <FontAwesomeIcon icon={showNew ? faEyeSlash : faEye} style={{ fontSize: 16 }} />
+          </button>
+        </div>
+      </div>
+
+      <div className="settings-field">
+        <label htmlFor="settings-confirm-password">Confirm new password</label>
+        <div className="settings-password-wrap">
+          <input
+            id="settings-confirm-password"
+            type={showConfirm ? 'text' : 'password'}
+            className="input"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            autoComplete="new-password"
+          />
+          <button type="button" className="settings-password-toggle" onClick={() => setShowConfirm((prev) => !prev)} aria-label="Toggle confirm password visibility">
+            <FontAwesomeIcon icon={showConfirm ? faEyeSlash : faEye} style={{ fontSize: 16 }} />
+          </button>
+        </div>
+      </div>
+
+      {error && <p className="settings-error">{error}</p>}
+      {success && (
+        <p className="settings-success">
+          <FontAwesomeIcon icon={faCheck} style={{ fontSize: 14 }} /> Password changed successfully!
+        </p>
+      )}
+
+      <button type="submit" className="btn btn-primary settings-save-btn" disabled={saving}>
+        <FontAwesomeIcon icon={faFloppyDisk} style={{ fontSize: 16 }} />
+        <span>{saving ? 'Saving...' : 'Update Password'}</span>
+      </button>
+    </form>
+  );
+};
 
 const EditProfilePanel = ({ user, updateUser }) => {
   const [fullName, setFullName] = useState(user?.fullName || '');
@@ -68,7 +169,7 @@ const EditProfilePanel = ({ user, updateUser }) => {
           <p className="settings-avatar-username">@{user?.username}</p>
           <p className="settings-avatar-hint">
             To change your avatar or cover photo, visit your{' '}
-            <a href={`/profile/${user?.username}`}>profile page</a>.
+            <Link to={`/profile/${user?.username}`}>profile page</Link>.
           </p>
         </div>
       </div>
@@ -94,7 +195,7 @@ const EditProfilePanel = ({ user, updateUser }) => {
           value={bio}
           onChange={(e) => setBio(e.target.value)}
           maxLength={200}
-          placeholder="Tell people a little about yourself…"
+          placeholder="Tell people a little about yourself..."
           rows={3}
         />
         <span className="settings-char-count">{bio.length}/200</span>
@@ -126,7 +227,11 @@ const EditProfilePanel = ({ user, updateUser }) => {
       </div>
 
       {error && <p className="settings-error">{error}</p>}
-      {success && <p className="settings-success">✓ Profile updated successfully!</p>}
+      {success && (
+        <p className="settings-success">
+          <FontAwesomeIcon icon={faCheck} style={{ fontSize: 14 }} /> Profile updated successfully!
+        </p>
+      )}
 
       <button
         id="settings-save-btn"
@@ -135,7 +240,7 @@ const EditProfilePanel = ({ user, updateUser }) => {
         disabled={saving}
       >
         <FontAwesomeIcon icon={faFloppyDisk} style={{ fontSize: 16 }} />
-        <span>{saving ? 'Saving…' : 'Save Changes'}</span>
+        <span>{saving ? 'Saving...' : 'Save Changes'}</span>
       </button>
     </form>
   );
@@ -156,7 +261,11 @@ const AppearancePanel = () => {
         >
           <div className="settings-theme-preview dark-preview" />
           <span>Dark</span>
-          {theme === 'dark' && <span className="settings-theme-check">✓</span>}
+          {theme === 'dark' && (
+            <span className="settings-theme-check">
+              <FontAwesomeIcon icon={faCheck} style={{ fontSize: 12 }} />
+            </span>
+          )}
         </button>
         <button
           id="settings-theme-light"
@@ -165,7 +274,11 @@ const AppearancePanel = () => {
         >
           <div className="settings-theme-preview light-preview" />
           <span>Light</span>
-          {theme === 'light' && <span className="settings-theme-check">✓</span>}
+          {theme === 'light' && (
+            <span className="settings-theme-check">
+              <FontAwesomeIcon icon={faCheck} style={{ fontSize: 12 }} />
+            </span>
+          )}
         </button>
       </div>
     </div>
@@ -179,16 +292,12 @@ const Settings = () => {
 
   const renderPanel = () => {
     switch (activeSection) {
-      case 'profile':
-        return <EditProfilePanel user={user} updateUser={updateUser} />;
       case 'appearance':
         return <AppearancePanel />;
+      case 'security':
+        return <ChangePasswordPanel />;
       default:
-        return (
-          <PlaceholderPanel
-            label={SECTIONS.find((s) => s.id === activeSection)?.label || 'Settings'}
-          />
-        );
+        return <EditProfilePanel user={user} updateUser={updateUser} />;
     }
   };
 

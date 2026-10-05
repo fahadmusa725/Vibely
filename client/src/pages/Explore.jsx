@@ -9,7 +9,7 @@ import api from '../services/api';
 import './Explore.css';
 
 const Explore = () => {
-  const { user } = useAuth();
+  const { updateUser } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
@@ -63,7 +63,8 @@ const Explore = () => {
 
   const handleFollowToggle = async (userId) => {
     try {
-      await api.post(`/users/${userId}/follow`);
+      const res = await api.post(`/users/${userId}/follow`);
+      updateUser({ followingCount: res.data.followingCount });
       setSuggestedUsers((prev) => prev.filter((u) => u._id !== userId));
     } catch (err) {
       console.error('Follow error:', err);
@@ -77,10 +78,10 @@ const Explore = () => {
         <div className="explore-header">
           <div className="explore-badge">
             <FontAwesomeIcon icon={faCompass} style={{ fontSize: 18 }} />
-            <span>Explore Community</span>
+            <span>Discover</span>
           </div>
-          <h2>Discover Fresh Moments</h2>
-          <p>Explore creative photography, designs, and lifestyle stories shared across Vibely</p>
+          <h2>Find something new</h2>
+          <p>Photos and stories from creators across Vibely, all in one place.</p>
           {activeTag && (
             <div className="explore-tag-chip">
               <span>#{activeTag}</span>
@@ -181,7 +182,6 @@ const Explore = () => {
         <RightSidebar
           suggestedUsers={suggestedUsers}
           onFollowUser={handleFollowToggle}
-          currentUser={user}
         />
       </aside>
     </>

@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import VerifiedBadge from './VerifiedBadge';
 import './LeftSidebar.css';
 
-const LeftSidebar = ({ onOpenCreateModal }) => {
+const LeftSidebar = () => {
   const { user, isAuthenticated, unreadCount } = useAuth();
   const navigate = useNavigate();
 
@@ -117,10 +117,7 @@ const LeftSidebar = ({ onOpenCreateModal }) => {
       </nav>
 
       <footer className="ls-footer">
-        <div className="ls-footer-links">
-          <span>Privacy</span> · <span>Terms</span> · <span>Help</span>
-        </div>
-        <p className="ls-copyright">© Vibely</p>
+        <p className="ls-copyright">© 2026 Vibely</p>
       </footer>
     </aside>
   );

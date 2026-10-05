@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faCircleCheck, faMagnifyingGlass, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faCircleCheck, faMagnifyingGlass, faUsers, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './Search.css';
@@ -14,7 +14,7 @@ const Search = () => {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [popularCreators, setPopularCreators] = useState([]);
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const Search = () => {
 
   const fetchInitialCreators = async () => {
     try {
-      const res = await api.get('/users/search?q=a');
+      const res = await api.get('/users/suggested');
       if (res.data.success) {
         setPopularCreators(res.data.data.slice(0, 6));
       }
@@ -69,7 +69,8 @@ const Search = () => {
   const handleFollowToggle = async (e, targetUserId) => {
     e.stopPropagation();
     try {
-      await api.post(`/users/${targetUserId}/follow`);
+      const res = await api.post(`/users/${targetUserId}/follow`);
+      updateUser({ followingCount: res.data.followingCount });
       setResults((prev) =>
         prev.map((u) => {
           if (u._id === targetUserId) {
@@ -111,7 +112,7 @@ const Search = () => {
               setSearchParams({});
             }}
           >
-            ✕
+            <FontAwesomeIcon icon={faXmark} style={{ fontSize: 14 }} />
           </button>
         )}
       </div>

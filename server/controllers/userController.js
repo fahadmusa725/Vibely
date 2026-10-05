@@ -216,9 +216,14 @@ exports.getFollowers = async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
+    const myFollowing = req.user ? req.user.following.map((id) => id.toString()) : [];
+
     return res.status(200).json({
       success: true,
-      data: user.followers,
+      data: user.followers.filter(Boolean).map((follower) => ({
+        ...follower.toObject(),
+        isFollowing: myFollowing.includes(follower._id.toString()),
+      })),
     });
   } catch (error) {
     return res.status(500).json({
@@ -238,9 +243,14 @@ exports.getFollowing = async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
+    const myFollowing = req.user ? req.user.following.map((id) => id.toString()) : [];
+
     return res.status(200).json({
       success: true,
-      data: user.following,
+      data: user.following.filter(Boolean).map((followed) => ({
+        ...followed.toObject(),
+        isFollowing: myFollowing.includes(followed._id.toString()),
+      })),
     });
   } catch (error) {
     return res.status(500).json({
