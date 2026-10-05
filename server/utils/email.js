@@ -1,24 +1,23 @@
-const sendResetEmail = async ({ to, name, resetUrl }) => {
-  const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      service_id: process.env.EMAILJS_SERVICE_ID,
-      template_id: process.env.EMAILJS_TEMPLATE_ID,
-      user_id: process.env.EMAILJS_PUBLIC_KEY,
-      accessToken: process.env.EMAILJS_PRIVATE_KEY,
-      template_params: {
-        name,
-        reset_link: resetUrl,
-        to_email: to,
-      },
-    }),
+const nodemailer = require('nodemailer');
+
+const createTransporter = () =>
+  nodemailer.createTransport({
+    service: process.env.EMAIL_SERVICE,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
   });
 
-  if (!res.ok) {
-    const details = await res.text();
-    throw new Error(`EmailJS responded with ${res.status}: ${details}`);
-  }
+const sendResetEmail = async ({ to, name, resetUrl }) => {
+  const transporter = createTransporter();
+
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+    to,
+    subject: 'Reset your Vibely password',
+    text: `Hi ${name},\n\nWe received a request to reset your Vibely password. Open the link below to choose a new one. It expires in 1 hour.\n\n${resetUrl}\n\nIf you did not ask for this, you can ignore this email.`,
+  });
 };
 
 module.exports = { sendResetEmail };
