@@ -116,7 +116,7 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
     try {
       await api.post(`/posts/${post._id}/like`);
       if (onPostUpdated) onPostUpdated({ ...post, isLiked: nextState, likesCount: nextCount, isSaved });
-    } catch (error) {
+    } catch {
       setIsLiked(!nextState);
       setLikesCount((prev) => (nextState ? Math.max(0, prev - 1) : prev + 1));
     }
@@ -213,13 +213,6 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
     }
   };
 
-  const timeLocation = [
-    formatRelativeTime(post.createdAt),
-    post.location ? post.location : null,
-  ]
-    .filter(Boolean)
-    .join(' • ');
-
   return (
     <>
       <article className="post-card card">
@@ -251,7 +244,8 @@ const PostCard = ({ post: initialPost, onPostDeleted, onPostUpdated, onOpenPostM
                 className="post-subtitle"
                 title={formatFullDateTooltip(post.createdAt)}
               >
-                {timeLocation}
+                <span>{formatRelativeTime(post.createdAt)}</span>
+                {post.location && <span className="post-subtitle-location">{post.location}</span>}
               </span>
             </div>
           </div>

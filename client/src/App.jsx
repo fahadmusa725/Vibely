@@ -46,6 +46,15 @@ function AppContent() {
     );
   }
 
+  if (user?.role === 'admin') {
+    return (
+      <Routes>
+        <Route path="/admin" element={<Admin />} />
+        <Route path="*" element={<Navigate to="/admin" replace />} />
+      </Routes>
+    );
+  }
+
   const useThreeCol = isThreeColPath(location.pathname);
 
   return (
@@ -78,7 +87,6 @@ function AppContent() {
               element={<Profile onOpenCreateModal={() => setIsCreateModalOpen(true)} refreshKey={feedRefreshKey} />}
             />
             <Route path="/post/:id" element={<PostPage />} />
-            <Route path="/admin" element={user?.role === 'admin' ? <Admin /> : <Navigate to="/" replace />} />
             <Route path="/login" element={<Auth mode="login" />} />
             <Route path="/register" element={<Auth mode="register" />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />

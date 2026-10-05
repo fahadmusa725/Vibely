@@ -128,7 +128,7 @@ const Profile = ({ onOpenCreateModal, refreshKey }) => {
     try {
       const res = await api.post(`/users/${profileUser._id}/follow`);
       updateUser({ followingCount: res.data.followingCount });
-    } catch (err) {
+    } catch {
       setIsFollowing(!nextState);
       setProfileUser((prev) => ({
         ...prev,

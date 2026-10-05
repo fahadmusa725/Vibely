@@ -112,7 +112,7 @@ const Auth = ({ mode = 'login' }) => {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     name="password"
-                    placeholder="••••••••"
+                    placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleChange}
                     required

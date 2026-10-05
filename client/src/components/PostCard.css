@@ -399,3 +399,14 @@
   gap: 8px;
   margin-top: 8px;
 }
+
+.post-subtitle-location::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  margin: 0 6px;
+  border-radius: 50%;
+  background: currentColor;
+  vertical-align: middle;
+}

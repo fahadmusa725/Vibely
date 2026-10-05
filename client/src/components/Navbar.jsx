@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faCompass, faFire, faGear, faHouse, faMagnifyingGlass, faMoon, faRightFromBracket, faSun, faUserShield, faUser, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faCompass, faFire, faGear, faHouse, faMagnifyingGlass, faMoon, faRightFromBracket, faSun, faUser, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { faBell as farBell, faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -163,19 +163,6 @@ const Navbar = () => {
                     <FontAwesomeIcon icon={faGear} style={{ fontSize: 17 }} />
                     <span>Settings</span>
                   </button>
-
-                  {user?.role === 'admin' && (
-                    <button
-                      className="dropdown-item-btn"
-                      onClick={() => {
-                        setIsDropdownOpen(false);
-                        navigate('/admin');
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faUserShield} style={{ fontSize: 17 }} />
-                      <span>Admin dashboard</span>
-                    </button>
-                  )}
 
                   <button
                     className="dropdown-item-btn"

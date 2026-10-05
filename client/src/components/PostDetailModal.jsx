@@ -125,7 +125,7 @@ const PostDetailModal = ({ post: initialPost, isOpen, onClose, onPostUpdated }) 
     try {
       await api.post(`/posts/${post._id}/like`);
       reportChange({ isLiked: nextState, likesCount: nextCount });
-    } catch (err) {
+    } catch {
       setIsLiked(!nextState);
       setLikesCount((prev) => (nextState ? Math.max(0, prev - 1) : prev + 1));
     }

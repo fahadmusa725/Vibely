@@ -192,7 +192,14 @@ const CreatePostModal = ({ isOpen, onClose, onPostCreated }) => {
                 </div>
                 <h4>Drag photos here</h4>
                 <p>Support JPG, PNG, WEBP up to 10MB each</p>
-                <button type="button" className="btn btn-primary select-computer-btn">
+                <button
+                  type="button"
+                  className="btn btn-primary select-computer-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    fileInputRef.current?.click();
+                  }}
+                >
                   Select from computer
                 </button>
               </div>

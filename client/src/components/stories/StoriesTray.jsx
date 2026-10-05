@@ -9,14 +9,12 @@ import './StoriesTray.css';
 const StoriesTray = () => {
   const { user, isAuthenticated } = useAuth();
   const [groups, setGroups] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [activeGroupIndex, setActiveGroupIndex] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const fetchStories = async () => {
     if (!isAuthenticated) {
       setGroups([]);
-      setLoading(false);
       return;
     }
     try {
@@ -25,7 +23,6 @@ const StoriesTray = () => {
     } catch (err) {
       console.error('Failed to fetch stories:', err);
     } finally {
-      setLoading(false);
     }
   };
 

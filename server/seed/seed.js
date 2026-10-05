@@ -9,6 +9,8 @@ const User = require('../models/User');
 const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 const Story = require('../models/Story');
+const Notification = require('../models/Notification');
+const { notify } = require('../utils/notify');
 
 const seedRichData = async () => {
   try {
@@ -37,6 +39,9 @@ const seedRichData = async () => {
       await Post.deleteMany({ author: { $in: seededUserIds } });
       await Comment.deleteMany({ author: { $in: seededUserIds } });
       await Story.deleteMany({ user: { $in: seededUserIds } });
+      await Notification.deleteMany({
+        $or: [{ recipient: { $in: seededUserIds } }, { sender: { $in: seededUserIds } }],
+      });
       await User.deleteMany({ _id: { $in: seededUserIds } });
     }
     console.log('Cleared previous seeded records.');
@@ -267,6 +272,12 @@ const seedRichData = async () => {
     }
 
     await Promise.all(users.map((u) => u.save()));
+
+    for (const follower of users) {
+      for (const targetId of follower.following) {
+        await notify({ recipient: targetId, sender: follower._id, type: 'follow' });
+      }
+    }
     console.log('Setup creator social follow networks.');
 
     const postsData = [
@@ -478,18 +489,34 @@ const seedRichData = async () => {
         const randomUser = users[Math.floor(Math.random() * users.length)];
         const randomText = realisticComments[Math.floor(Math.random() * realisticComments.length)];
         
-        await Comment.create({
+        const comment = await Comment.create({
           post: post._id,
           author: randomUser._id,
           text: randomText,
+        });
+        await notify({
+          recipient: post.author,
+          sender: randomUser._id,
+          type: 'comment',
+          post: post._id,
+          comment: comment._id,
         });
         totalComments++;
       }
       post.commentsCount = numComments;
       await post.save();
+
+      for (const likerId of post.likes) {
+        await notify({ recipient: post.author, sender: likerId, type: 'like', post: post._id });
+      }
     }
 
     console.log(`Created ${totalComments} natural comments across posts.`);
+
+    const notificationCount = await Notification.countDocuments({
+      recipient: { $in: users.map((u) => u._id) },
+    });
+    console.log(`Created ${notificationCount} notifications for seeded accounts.`);
 
     const storyData = [
       {

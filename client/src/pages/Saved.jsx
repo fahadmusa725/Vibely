@@ -3,14 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { faBookmark as farBookmark } from '@fortawesome/free-regular-svg-icons';
-import { useAuth } from '../context/AuthContext';
 import PostCard from '../components/PostCard';
 import PostDetailModal from '../components/PostDetailModal';
 import api from '../services/api';
 import './Saved.css';
 
 const Saved = () => {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const [savedPosts, setSavedPosts] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -40,7 +40,7 @@
 }
 
 .admin-nav-item,
-.admin-back-btn {
+.admin-logout-btn {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -58,7 +58,7 @@
 }
 
 .admin-nav-item:hover,
-.admin-back-btn:hover {
+.admin-logout-btn:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
 }
@@ -68,7 +68,7 @@
   color: var(--accent-primary);
 }
 
-.admin-back-btn {
+.admin-logout-btn {
   margin-top: auto;
   border-top: 1px solid var(--border-subtle);
   border-radius: 0 0 var(--radius-md) var(--radius-md);
@@ -631,7 +631,7 @@
     padding: 8px 12px;
   }
 
-  .admin-back-btn {
+  .admin-logout-btn {
     width: auto;
     margin-top: 0;
     border-top: none;

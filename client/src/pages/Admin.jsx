@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faChevronLeft, faChevronRight, faComment, faFire, faGauge, faHashtag, faImage, faLayerGroup, faMagnifyingGlass, faTrash, faUserShield, faUsers, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faChevronRight, faComment, faFire, faGauge, faHashtag, faImage, faLayerGroup, faMagnifyingGlass, faRightFromBracket, faTrash, faUserShield, faUsers, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import { getAvatarUrl } from '../utils/avatar';
 import VerifiedBadge from '../components/VerifiedBadge';
 import './Admin.css';
@@ -422,7 +423,13 @@ const SECTIONS = [
 
 const Admin = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [activeSection, setActiveSection] = useState('overview');
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
   const current = SECTIONS.find((section) => section.id === activeSection);
 
   return (
@@ -446,9 +453,9 @@ const Admin = () => {
           ))}
         </nav>
 
-        <button className="admin-back-btn" onClick={() => navigate('/')}>
-          <FontAwesomeIcon icon={faArrowLeft} style={{ fontSize: 14 }} />
-          <span>Back to app</span>
+        <button className="admin-logout-btn" onClick={handleLogout}>
+          <FontAwesomeIcon icon={faRightFromBracket} style={{ fontSize: 14 }} />
+          <span>Log out</span>
         </button>
       </aside>
 
