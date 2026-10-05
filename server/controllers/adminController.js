@@ -158,6 +158,36 @@ exports.getStats = async (req, res) => {
   }
 };
 
+exports.getRecentPosts = async (req, res) => {
+  try {
+    const posts = await Post.find({})
+      .sort({ createdAt: -1 })
+      .limit(6)
+      .select('caption images likes commentsCount createdAt author')
+      .populate('author', 'username fullName avatar isVerified')
+      .lean();
+
+    return res.status(200).json({
+      success: true,
+      data: posts.map((post) => ({
+        _id: post._id,
+        caption: post.caption,
+        image: post.images && post.images.length > 0 ? post.images[0].url : null,
+        author: post.author,
+        likesCount: (post.likes || []).length,
+        commentsCount: post.commentsCount || 0,
+        createdAt: post.createdAt,
+      })),
+    });
+  } catch (error) {
+    console.error('admin getRecentPosts error:', error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || 'Server error loading recent posts',
+    });
+  }
+};
+
 exports.listUsers = async (req, res) => {
   try {
     const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
