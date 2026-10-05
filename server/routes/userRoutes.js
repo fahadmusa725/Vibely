@@ -13,18 +13,12 @@ const {
   getContacts,
 } = require('../controllers/userController');
 const { protect } = require('../middleware/auth');
+const optionalAuth = require('../middleware/optionalAuth');
 const upload = require('../middleware/upload');
-
-const optionalAuth = async (req, res, next) => {
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    return protect(req, res, next);
-  }
-  next();
-};
 
 router.get('/me/saved', protect, getSavedPosts);
 router.get('/me/contacts', protect, getContacts);
-router.get('/search', searchUsers);
+router.get('/search', optionalAuth, searchUsers);
 router.get('/suggested', optionalAuth, getSuggestedUsers);
 router.put('/profile', protect, updateProfile);
 router.put('/media', protect, upload.single('image'), updateUserMedia);

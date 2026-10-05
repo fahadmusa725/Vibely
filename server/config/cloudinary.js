@@ -33,6 +33,8 @@ const uploadStream = (buffer, folder = 'vibely') => {
         }
       );
       Readable.from(buffer).pipe(cldStream);
+    } else if (process.env.NODE_ENV === 'production') {
+      reject(new Error('Image uploads are not configured on the server'));
     } else {
       const base64Data = buffer.toString('base64');
       const dataUri = `data:image/jpeg;base64,${base64Data}`;

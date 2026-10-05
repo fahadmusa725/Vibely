@@ -12,14 +12,8 @@ const {
   editPost,
 } = require('../controllers/postController');
 const { protect } = require('../middleware/auth');
+const optionalAuth = require('../middleware/optionalAuth');
 const upload = require('../middleware/upload');
-
-const optionalAuth = async (req, res, next) => {
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    return protect(req, res, next);
-  }
-  next();
-};
 
 router.post('/', protect, upload.array('images', 10), createPost);
 router.get('/feed', protect, getFeed);

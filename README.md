@@ -57,7 +57,7 @@ cp .env.example .env
 npm run dev
 ```
 
-Set the values in `client/.env` as needed. In development, Vite proxies `/api` to `http://localhost:5000`. `VITE_API_URL` is only needed for a deployed backend. The `VITE_EMAILJS_*` values enable the forgot-password email.
+Set the values in `client/.env` as needed. In development, Vite proxies `/api` to `http://localhost:5000`. `VITE_API_URL` is only needed for a deployed backend. The forgot-password email is sent by the server, so EmailJS settings go in `server/.env`.
 
 The app runs at `http://localhost:5173`, and the API at `http://localhost:5000/api`.
 

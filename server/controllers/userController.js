@@ -45,7 +45,7 @@ exports.getUserProfile = async (req, res) => {
           _id: user._id,
           username: user.username,
           fullName: user.fullName,
-          email: user.email,
+          email: req.user && req.user._id.toString() === user._id.toString() ? user.email : undefined,
           avatar: user.avatar,
           coverPhoto: user.coverPhoto,
           bio: user.bio,
@@ -267,16 +267,23 @@ exports.searchUsers = async (req, res) => {
       return res.status(200).json({ success: true, data: [] });
     }
 
-    const regex = new RegExp(q.trim(), 'i');
+    const escaped = q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escaped, 'i');
     const users = await User.find({
       $or: [{ username: regex }, { fullName: regex }],
     })
-      .select('username fullName avatar bio isVerified followers following')
-      .limit(20);
+      .select('username fullName avatar bio isVerified')
+      .limit(20)
+      .lean();
+
+    const myFollowing = req.user ? req.user.following.map((id) => id.toString()) : [];
 
     return res.status(200).json({
       success: true,
-      data: users,
+      data: users.map((u) => ({
+        ...u,
+        isFollowing: myFollowing.includes(u._id.toString()),
+      })),
     });
   } catch (error) {
     console.error('searchUsers error:', error);

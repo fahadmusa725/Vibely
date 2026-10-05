@@ -11,7 +11,7 @@ import './ResetPassword.css';
 const ResetPassword = () => {
   const { token } = useParams();
   const navigate = useNavigate();
-  const { login: setAuthUser } = useAuth();
+  const { setSession } = useAuth();
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -39,7 +39,10 @@ const ResetPassword = () => {
       const res = await api.post(`/auth/reset-password/${token}`, { password });
       if (res.data.success) {
         setSuccess(true);
-        setTimeout(() => navigate('/'), 2500);
+        setTimeout(() => {
+          setSession(res.data.data);
+          navigate('/');
+        }, 2500);
       } else {
         setError(res.data.message || 'Password reset failed. Please try again.');
       }
@@ -172,7 +175,7 @@ const ResetPassword = () => {
               <FontAwesomeIcon icon={faCircleCheck} style={{ fontSize: 48 }} />
             </div>
             <h2>Password Reset!</h2>
-            <p>Your password has been changed successfully. Redirecting you to the home page…</p>
+            <p>Your password has been changed successfully. Redirecting you to the home page...</p>
           </div>
         )}
 

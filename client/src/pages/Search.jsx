@@ -72,18 +72,7 @@ const Search = () => {
       const res = await api.post(`/users/${targetUserId}/follow`);
       updateUser({ followingCount: res.data.followingCount });
       setResults((prev) =>
-        prev.map((u) => {
-          if (u._id === targetUserId) {
-            const isFollowing = u.followers?.includes(user._id);
-            return {
-              ...u,
-              followers: isFollowing
-                ? u.followers.filter((id) => id !== user._id)
-                : [...(u.followers || []), user._id],
-            };
-          }
-          return u;
-        })
+        prev.map((u) => (u._id === targetUserId ? { ...u, isFollowing: res.data.isFollowing } : u))
       );
     } catch (err) {
       console.error('Follow toggle error:', err);
@@ -142,7 +131,7 @@ const Search = () => {
           <div className="users-results-grid">
             {displayList.map((creator) => {
               const isCurrentUser = user && user._id === creator._id;
-              const isFollowing = user && creator.followers?.includes(user._id);
+              const isFollowing = creator.isFollowing;
 
               return (
                 <div

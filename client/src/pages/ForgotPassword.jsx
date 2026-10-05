@@ -1,22 +1,16 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import emailjs from '@emailjs/browser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faCircleCheck, faCircleExclamation, faEnvelope, faTriangleExclamation, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faCircleCheck, faCircleExclamation, faEnvelope, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
 import api from '../services/api';
 import './Auth.css';
 import './ForgotPassword.css';
-
-const EJS_SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-const EJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-const EJS_PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
 const ForgotPassword = () => {
   const [email, setEmail]           = useState('');
   const [loading, setLoading]       = useState(false);
   const [error, setError]           = useState('');
   const [success, setSuccess]       = useState(false);
-  const [emailWarning, setEmailWarning] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,7 +18,6 @@ const ForgotPassword = () => {
 
     setLoading(true);
     setError('');
-    setEmailWarning('');
 
     try {
       const res = await api.post('/auth/forgot-password', { email: email.trim() });
@@ -32,28 +25,6 @@ const ForgotPassword = () => {
       if (!res.data.success) {
         setError(res.data.message || 'Something went wrong. Please try again.');
         return;
-      }
-
-      const { resetUrl, userName } = res.data;
-
-      if (resetUrl) {
-        try {
-          await emailjs.send(
-            EJS_SERVICE_ID,
-            EJS_TEMPLATE_ID,
-            {
-              name:       userName || 'there',
-              reset_link: resetUrl,
-              to_email:   email.trim(),
-            },
-            EJS_PUBLIC_KEY
-          );
-        } catch (ejsErr) {
-          console.error('[EmailJS] Failed to send reset email:', ejsErr);
-          setEmailWarning(
-            'We had trouble sending the email. If it doesn\'t arrive, contact support.'
-          );
-        }
       }
 
       setSuccess(true);
@@ -113,7 +84,7 @@ const ForgotPassword = () => {
                 className="btn btn-primary auth-submit-btn"
                 disabled={loading}
               >
-                <span>{loading ? 'Sending…' : 'Send Reset Link'}</span>
+                <span>{loading ? 'Sending...' : 'Send Reset Link'}</span>
               </button>
             </form>
           </>
@@ -129,16 +100,9 @@ const ForgotPassword = () => {
             </p>
             <p className="fp-hint">Didn't receive it? Check your spam folder or try again in a moment.</p>
 
-            {emailWarning && (
-              <div className="fp-email-warning">
-                <FontAwesomeIcon icon={faTriangleExclamation} style={{ fontSize: 16 }} />
-                <span>{emailWarning}</span>
-              </div>
-            )}
-
             <button
               className="btn btn-secondary fp-retry-btn"
-              onClick={() => { setSuccess(false); setEmail(''); setEmailWarning(''); }}
+              onClick={() => { setSuccess(false); setEmail(''); }}
             >
               Try a different email
             </button>

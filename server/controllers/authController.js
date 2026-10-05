@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../models/User');
 const Post = require('../models/Post');
+const { sendResetEmail } = require('../utils/email');
 
 const generateToken = (id) => {
   return jwt.sign(
@@ -246,11 +247,26 @@ exports.forgotPassword = async (req, res) => {
     const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
     const resetUrl = `${clientUrl}/reset-password/${rawToken}`;
 
+    try {
+      await sendResetEmail({
+        to: user.email,
+        name: user.fullName || user.username,
+        resetUrl,
+      });
+    } catch (emailError) {
+      console.error('Reset email failed:', emailError);
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save({ validateBeforeSave: false });
+      return res.status(500).json({
+        success: false,
+        message: 'We could not send the reset email. Please try again later.',
+      });
+    }
+
     return res.status(200).json({
       success: true,
       message: 'If an account with that email exists, a reset link has been sent.',
-      resetUrl,
-      userName: user.fullName || user.username,
     });
   } catch (error) {
     console.error('forgotPassword error:', error);

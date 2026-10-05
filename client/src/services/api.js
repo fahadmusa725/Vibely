@@ -26,10 +26,12 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       if (
         !error.config.url.includes('/auth/login') &&
-        !error.config.url.includes('/auth/register')
+        !error.config.url.includes('/auth/register') &&
+        !error.config.url.includes('/auth/change-password')
       ) {
         localStorage.removeItem('vibely_token');
         localStorage.removeItem('vibely_user');
+        window.dispatchEvent(new Event('vibely:unauthorized'));
       }
     }
     return Promise.reject(error);

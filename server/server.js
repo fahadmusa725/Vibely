@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const multer = require('multer');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -58,6 +59,15 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    return res.status(400).json({
+      success: false,
+      message: err.code === 'LIMIT_FILE_SIZE' ? 'Each image must be 10MB or smaller' : err.message,
+    });
+  }
+  if (err.message && err.message.startsWith('Only image files')) {
+    return res.status(400).json({ success: false, message: err.message });
+  }
   console.error('Unhandled Error:', err);
   const statusCode = err.statusCode || 500;
   res.status(statusCode).json({

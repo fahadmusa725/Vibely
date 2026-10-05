@@ -53,14 +53,17 @@ export const AuthProvider = ({ children }) => {
     initAuth();
   }, []);
 
+  const setSession = (userData) => {
+    setUser(userData);
+    setToken(userData.token);
+    localStorage.setItem('vibely_token', userData.token);
+    localStorage.setItem('vibely_user', JSON.stringify(userData));
+  };
+
   const login = async (loginId, password) => {
     const res = await api.post('/auth/login', { loginId, password });
     if (res.data.success) {
-      const userData = res.data.data;
-      setUser(userData);
-      setToken(userData.token);
-      localStorage.setItem('vibely_token', userData.token);
-      localStorage.setItem('vibely_user', JSON.stringify(userData));
+      setSession(res.data.data);
       return { success: true };
     }
     return { success: false, message: res.data.message };
@@ -69,11 +72,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (formData) => {
     const res = await api.post('/auth/register', formData);
     if (res.data.success) {
-      const userData = res.data.data;
-      setUser(userData);
-      setToken(userData.token);
-      localStorage.setItem('vibely_token', userData.token);
-      localStorage.setItem('vibely_user', JSON.stringify(userData));
+      setSession(res.data.data);
       return { success: true };
     }
     return { success: false, message: res.data.message };
@@ -95,6 +94,11 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  useEffect(() => {
+    window.addEventListener('vibely:unauthorized', logout);
+    return () => window.removeEventListener('vibely:unauthorized', logout);
+  }, [logout]);
+
   return (
     <AuthContext.Provider
       value={{
@@ -106,6 +110,7 @@ export const AuthProvider = ({ children }) => {
         refreshUnreadCount: fetchUnreadCount,
         login,
         register,
+        setSession,
         logout,
         updateUser,
       }}
