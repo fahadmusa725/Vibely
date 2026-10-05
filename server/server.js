@@ -23,9 +23,17 @@ connectDB();
 
 const app = express();
 
+const allowedOrigins = (process.env.CLIENT_URL || '')
+  .split(',')
+  .map((origin) => origin.trim().replace(/\/$/, ''))
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || '*',
+    origin: (origin, callback) => {
+      const requestOrigin = origin ? origin.replace(/\/$/, '') : origin;
+      callback(null, !requestOrigin || allowedOrigins.length === 0 || allowedOrigins.includes(requestOrigin));
+    },
     credentials: true,
   })
 );
@@ -79,7 +87,7 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-if (process.env.NODE_ENV !== 'test') {
+if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
