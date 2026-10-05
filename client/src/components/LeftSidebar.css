@@ -117,6 +117,20 @@
   color: var(--text-primary);
 }
 
+.ls-badge {
+  margin-left: auto;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: var(--accent-primary);
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+}
+
 .ls-nav-item.active {
   background: var(--accent-primary);
   color: #ffffff;

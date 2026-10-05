@@ -130,6 +130,13 @@ All routes are prefixed with `/api`. Endpoints marked `(auth)` require an `Autho
 - `POST /:id/view`: Mark a story as viewed (auth)
 - `DELETE /:id`: Delete a story (auth)
 
+**Notifications** (`/api/notifications`)
+
+- `GET /`: Notifications for the current user. Query: `type` (all, likes, comments, follows), `page`, `limit` (auth)
+- `GET /unread-count`: Unread count (auth)
+- `PATCH /read-all`: Mark all as read (auth)
+- `PATCH /:id/read`: Mark one as read (auth)
+
 ## Deployment
 
 Deploy `client/` and `server/` as separate projects, and set the environment variables from each folder's `.env.example` file.

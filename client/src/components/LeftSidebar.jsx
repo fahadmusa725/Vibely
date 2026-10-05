@@ -8,7 +8,7 @@ import VerifiedBadge from './VerifiedBadge';
 import './LeftSidebar.css';
 
 const LeftSidebar = ({ onOpenCreateModal }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, unreadCount } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -90,6 +90,9 @@ const LeftSidebar = ({ onOpenCreateModal }) => {
         >
           <FontAwesomeIcon icon={farBell} style={{ fontSize: 20 }} />
           <span>Notifications</span>
+          {unreadCount > 0 && (
+            <span className="ls-badge">{unreadCount > 99 ? '99+' : unreadCount}</span>
+          )}
         </NavLink>
 
         {isAuthenticated && user && (

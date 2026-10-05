@@ -13,6 +13,7 @@ import Search from './pages/Search';
 import Profile from './pages/Profile';
 import Saved from './pages/Saved';
 import Settings from './pages/Settings';
+import PostPage from './pages/PostPage';
 import Auth from './pages/Auth';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
@@ -71,6 +72,7 @@ function AppContent() {
             <Route path="/saved" element={<Saved />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile/:username" element={<Profile />} />
+            <Route path="/post/:id" element={<PostPage />} />
             <Route path="/login" element={<Auth mode="login" />} />
             <Route path="/register" element={<Auth mode="register" />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />

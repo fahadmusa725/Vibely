@@ -1,5 +1,6 @@
 const Comment = require('../models/Comment');
 const Post = require('../models/Post');
+const { notify, unnotify } = require('../utils/notify');
 
 exports.addComment = async (req, res) => {
   try {
@@ -21,8 +22,9 @@ exports.addComment = async (req, res) => {
       });
     }
 
+    let parent = null;
     if (parentComment) {
-      const parent = await Comment.findOne({ _id: parentComment, post: postId });
+      parent = await Comment.findOne({ _id: parentComment, post: postId });
       if (!parent) {
         return res.status(404).json({
           success: false,
@@ -46,6 +48,13 @@ exports.addComment = async (req, res) => {
 
     post.commentsCount = (post.commentsCount || 0) + 1;
     await post.save();
+
+    if (parent) {
+      await notify({ recipient: parent.author, sender: req.user._id, type: 'reply', post: post._id, comment: comment._id });
+    }
+    if (!parent || post.author.toString() !== parent.author.toString()) {
+      await notify({ recipient: post.author, sender: req.user._id, type: 'comment', post: post._id, comment: comment._id });
+    }
 
     const populatedComment = await Comment.findById(comment._id).populate(
       'author',
@@ -130,6 +139,8 @@ exports.deleteComment = async (req, res) => {
 
     const replyCount = await Comment.countDocuments({ parentComment: comment._id });
 
+    const replies = await Comment.find({ parentComment: comment._id }).select('_id');
+    await unnotify({ comment: { $in: [comment._id, ...replies.map((r) => r._id)] } });
     await Comment.deleteMany({ parentComment: comment._id });
     await Comment.findByIdAndDelete(comment._id);
 

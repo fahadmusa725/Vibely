@@ -2,6 +2,7 @@ const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 const User = require('../models/User');
 const { uploadStream } = require('../config/cloudinary');
+const { notify, unnotify } = require('../utils/notify');
 
 const extractHashtags = (caption) => {
   if (!caption) return [];
@@ -291,6 +292,12 @@ exports.toggleLike = async (req, res) => {
 
     await post.save();
 
+    if (isLiked) {
+      await unnotify({ recipient: post.author, sender: currentUserId, type: 'like', post: post._id });
+    } else {
+      await notify({ recipient: post.author, sender: currentUserId, type: 'like', post: post._id });
+    }
+
     return res.status(200).json({
       success: true,
       isLiked: !isLiked,
@@ -362,6 +369,7 @@ exports.deletePost = async (req, res) => {
 
     await Comment.deleteMany({ post: post._id });
     await Post.findByIdAndDelete(post._id);
+    await unnotify({ post: post._id });
 
     return res.status(200).json({
       success: true,

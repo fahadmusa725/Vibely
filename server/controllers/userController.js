@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Post = require('../models/Post');
 const { uploadStream } = require('../config/cloudinary');
+const { notify, unnotify } = require('../utils/notify');
 
 exports.getUserProfile = async (req, res) => {
   try {
@@ -168,6 +169,12 @@ exports.toggleFollow = async (req, res) => {
 
     await currentUser.save();
     await targetUser.save();
+
+    if (isFollowing) {
+      await unnotify({ recipient: targetUser._id, sender: currentUserId, type: 'follow' });
+    } else {
+      await notify({ recipient: targetUser._id, sender: currentUserId, type: 'follow' });
+    }
 
     return res.status(200).json({
       success: true,

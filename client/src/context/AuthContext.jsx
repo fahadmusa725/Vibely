@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
 
 const AuthContext = createContext();
@@ -10,6 +10,27 @@ export const AuthProvider = ({ children }) => {
   });
   const [token, setToken] = useState(() => localStorage.getItem('vibely_token') || null);
   const [loading, setLoading] = useState(true);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchUnreadCount = useCallback(async () => {
+    try {
+      const res = await api.get('/notifications/unread-count');
+      setUnreadCount(res.data.count);
+    } catch (err) {
+      console.error('Failed to load unread notifications:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!token) return undefined;
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 30000);
+    window.addEventListener('focus', fetchUnreadCount);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', fetchUnreadCount);
+    };
+  }, [token, fetchUnreadCount]);
 
   useEffect(() => {
     const initAuth = async () => {
@@ -61,6 +82,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setToken(null);
+    setUnreadCount(0);
     localStorage.removeItem('vibely_token');
     localStorage.removeItem('vibely_user');
   };
@@ -80,6 +102,8 @@ export const AuthProvider = ({ children }) => {
         token,
         loading,
         isAuthenticated: !!token && !!user,
+        unreadCount,
+        refreshUnreadCount: fetchUnreadCount,
         login,
         register,
         logout,

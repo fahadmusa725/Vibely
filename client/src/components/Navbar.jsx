@@ -8,7 +8,7 @@ import { useTheme } from '../context/ThemeContext';
 import './Navbar.css';
 
 const Navbar = ({ onOpenCreateModal }) => {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, unreadCount } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
@@ -100,6 +100,9 @@ const Navbar = ({ onOpenCreateModal }) => {
             title="Notifications"
           >
             <FontAwesomeIcon icon={farBell} style={{ fontSize: 20 }} />
+            {unreadCount > 0 && (
+              <span className="nav-badge">{unreadCount > 99 ? '99+' : unreadCount}</span>
+            )}
           </NavLink>
 
           {isAuthenticated ? (
