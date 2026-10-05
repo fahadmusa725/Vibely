@@ -53,7 +53,7 @@ const seedRichData = async () => {
         password: hashedPassword,
         avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=80',
         coverPhoto: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1400&auto=format&fit=crop&q=80',
-        bio: 'Senior Art Director & Generative Visualist 🎨 | Designing brand universes & typography | San Francisco, CA',
+        bio: 'Senior Art Director & Generative Visualist | Designing brand universes & typography | San Francisco, CA',
         website: 'https://sophiachen.design',
         location: 'San Francisco, CA',
         isVerified: true,
@@ -66,7 +66,7 @@ const seedRichData = async () => {
         password: hashedPassword,
         avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=80',
         coverPhoto: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1400&auto=format&fit=crop&q=80',
-        bio: 'Expedition & Golden Hour photographer 🏔️ | Sony Alpha Ambassador | Chasing untamed landscapes worldwide',
+        bio: 'Expedition & Golden Hour photographer | Sony Alpha Ambassador | Chasing untamed landscapes worldwide',
         website: 'https://marcusvance.photo',
         location: 'Vancouver, Canada',
         isVerified: true,
@@ -79,7 +79,7 @@ const seedRichData = async () => {
         password: hashedPassword,
         avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&auto=format&fit=crop&q=80',
         coverPhoto: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1400&auto=format&fit=crop&q=80',
-        bio: 'Indie Hacker & Frontend Architect ⚡️ | Building aesthetic tools with React & WebGL | Coffee purist ☕️',
+        bio: 'Indie Hacker & Frontend Architect | Building aesthetic tools with React & WebGL | Coffee purist',
         website: 'https://elenarostova.dev',
         location: 'Stockholm, Sweden',
         isVerified: true,
@@ -92,7 +92,7 @@ const seedRichData = async () => {
         password: hashedPassword,
         avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&auto=format&fit=crop&q=80',
         coverPhoto: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1400&auto=format&fit=crop&q=80',
-        bio: 'Architectural photographer & Wabi-Sabi curator ⛩️ | Exploring brutalism, light, and wooden joinery',
+        bio: 'Architectural photographer & Wabi-Sabi curator | Exploring brutalism, light, and wooden joinery',
         website: 'https://kaizendesign.jp',
         location: 'Kyoto, Japan',
         isVerified: true,
@@ -105,7 +105,7 @@ const seedRichData = async () => {
         password: hashedPassword,
         avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=80',
         coverPhoto: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1400&auto=format&fit=crop&q=80',
-        bio: 'Editorial fashion stylist & ceramicist 🏺 | Minimalist silhouettes, neutral tones, and vintage couture',
+        bio: 'Editorial fashion stylist & ceramicist | Minimalist silhouettes, neutral tones, and vintage couture',
         website: 'https://chloedupont.fr',
         location: 'Paris, France',
         isVerified: false,
@@ -118,7 +118,7 @@ const seedRichData = async () => {
         password: hashedPassword,
         avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=500&auto=format&fit=crop&q=80',
         coverPhoto: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1400&auto=format&fit=crop&q=80',
-        bio: 'Ambient music producer & modular synth addict 🎹 | Sonic landscapes for deep focus sessions 🎧',
+        bio: 'Ambient music producer & modular synth addict | Sonic landscapes for deep focus sessions',
         website: 'https://liamthorneaudio.com',
         location: 'Berlin, Germany',
         isVerified: true,
@@ -131,7 +131,7 @@ const seedRichData = async () => {
         password: hashedPassword,
         avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&auto=format&fit=crop&q=80',
         coverPhoto: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1400&auto=format&fit=crop&q=80',
-        bio: 'Landscape architect & rare plant collector 🌿 | Creating urban jungle micro-habitats in Brooklyn',
+        bio: 'Landscape architect & rare plant collector | Creating urban jungle micro-habitats in Brooklyn',
         website: 'https://mayabotanicals.co',
         location: 'Brooklyn, NY',
         isVerified: false,
@@ -144,7 +144,7 @@ const seedRichData = async () => {
         password: hashedPassword,
         avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&auto=format&fit=crop&q=80',
         coverPhoto: 'https://images.unsplash.com/photo-1509281373149-e957c6296406?w=1400&auto=format&fit=crop&q=80',
-        bio: 'Cinematographer & 35mm film documentarian 🎞️ | Capturing nocturnal cityscapes and skate culture',
+        bio: 'Cinematographer & 35mm film documentarian | Capturing nocturnal cityscapes and skate culture',
         website: 'https://mateomorales.film',
         location: 'Barcelona, Spain',
         isVerified: true,
@@ -157,7 +157,7 @@ const seedRichData = async () => {
         password: hashedPassword,
         avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&auto=format&fit=crop&q=80',
         coverPhoto: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1400&auto=format&fit=crop&q=80',
-        bio: 'Industrial Designer @ Studio K | Exploring aluminum textures, ergonomic keyboards, and clean desks 📐',
+        bio: 'Industrial Designer @ Studio K | Exploring aluminum textures, ergonomic keyboards, and clean desks',
         website: 'https://averysterling.design',
         location: 'Seattle, WA',
         isVerified: true,
@@ -170,7 +170,7 @@ const seedRichData = async () => {
         password: hashedPassword,
         avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&auto=format&fit=crop&q=80',
         coverPhoto: 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=1400&auto=format&fit=crop&q=80',
-        bio: 'Specialty coffee roaster & pastry recipe developer 🥐 | V60 extraction science & sourdough obsession',
+        bio: 'Specialty coffee roaster & pastry recipe developer | V60 extraction science & sourdough obsession',
         website: 'https://hannahbrew.com',
         location: 'Melbourne, Australia',
         isVerified: false,
@@ -183,7 +183,7 @@ const seedRichData = async () => {
         password: hashedPassword,
         avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=500&auto=format&fit=crop&q=80',
         coverPhoto: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1400&auto=format&fit=crop&q=80',
-        bio: 'Ultra-trail marathoner & endurance coach 🏃‍♂️ | 100-mile mountain finishes | Plant-based fuel 🌱',
+        bio: 'Ultra-trail marathoner & endurance coach | 100-mile mountain finishes | Plant-based fuel',
         website: 'https://zackendurance.com',
         location: 'Boulder, CO',
         isVerified: true,
@@ -196,7 +196,7 @@ const seedRichData = async () => {
         password: hashedPassword,
         avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=80',
         coverPhoto: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1400&auto=format&fit=crop&q=80',
-        bio: 'Children book illustrator & watercolorist 📖🎨 | Nordic folklore & cozy animal portraits',
+        bio: 'Children book illustrator & watercolorist | Nordic folklore & cozy animal portraits',
         website: 'https://ninajohansson.art',
         location: 'Oslo, Norway',
         isVerified: true,
@@ -209,7 +209,7 @@ const seedRichData = async () => {
         password: hashedPassword,
         avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&auto=format&fit=crop&q=80',
         coverPhoto: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1400&auto=format&fit=crop&q=80',
-        bio: 'Cyberpunk & neon street photographer 🌃 | Seoul nightwalks | Leica Q3 shooter 📸',
+        bio: 'Cyberpunk & neon street photographer | Seoul nightwalks | Leica Q3 shooter',
         website: 'https://davidkim.photo',
         location: 'Seoul, South Korea',
         isVerified: true,
@@ -222,7 +222,7 @@ const seedRichData = async () => {
         password: hashedPassword,
         avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&auto=format&fit=crop&q=80',
         coverPhoto: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1400&auto=format&fit=crop&q=80',
-        bio: 'Mindfulness practitioner & yoga guide 🧘‍♀️ | Breathwork retreats & holistic habit coaching',
+        bio: 'Mindfulness practitioner & yoga guide | Breathwork retreats & holistic habit coaching',
         website: 'https://oliviabennett.co',
         location: 'Bali, Indonesia',
         isVerified: false,
@@ -235,7 +235,7 @@ const seedRichData = async () => {
         password: hashedPassword,
         avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=80',
         coverPhoto: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1400&auto=format&fit=crop&q=80',
-        bio: 'Head Chef @ Ocaso | Modern Iberian gastronomy & fermentation wizardry 🍷🥘',
+        bio: 'Head Chef @ Ocaso | Modern Iberian gastronomy & fermentation wizardry',
         website: 'https://carlosmendeschef.com',
         location: 'Lisbon, Portugal',
         isVerified: true,
@@ -272,7 +272,7 @@ const seedRichData = async () => {
     const postsData = [
       {
         author: users[0]._id,
-        caption: 'Exploring color resonance and glass distortions in our latest design studio cycle. There is something mesmerizing about how violet light refacts across geometric plexi. 🎨✨ #design #creative #visualart',
+        caption: 'Exploring color resonance and glass distortions in our latest design studio cycle. There is something mesmerizing about how violet light refacts across geometric plexi. #design #creative #visualart',
         images: [
           { url: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1080&auto=format&fit=crop&q=80' },
           { url: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=1080&auto=format&fit=crop&q=80' }
@@ -282,7 +282,7 @@ const seedRichData = async () => {
       },
       {
         author: users[1]._id,
-        caption: 'First light over the glacier peaks of Moraine Lake. Setting the alarm for 4:00 AM in sub-zero alpine air is always tough, but when the horizon ignites into molten gold, nothing else matters. 🏔️✨ #photography #travel #alberta',
+        caption: 'First light over the glacier peaks of Moraine Lake. Setting the alarm for 4:00 AM in sub-zero alpine air is always tough, but when the horizon ignites into molten gold, nothing else matters. #photography #travel #alberta',
         images: [
           { url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1080&auto=format&fit=crop&q=80' },
           { url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1080&auto=format&fit=crop&q=80' }
@@ -292,7 +292,7 @@ const seedRichData = async () => {
       },
       {
         author: users[2]._id,
-        caption: 'Sunday workstation setup. Testing the new dynamic theme switcher and glass card shadows in Vibely. Clean aesthetic, zero clutter, and strong pour-over coffee. 💻☕️ #design #minimal #desksetup',
+        caption: 'Sunday workstation setup. Testing the new dynamic theme switcher and glass card shadows in Vibely. Clean aesthetic, zero clutter, and strong pour-over coffee. #design #minimal #desksetup',
         images: [
           { url: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=1080&auto=format&fit=crop&q=80' }
         ],
@@ -301,7 +301,7 @@ const seedRichData = async () => {
       },
       {
         author: users[3]._id,
-        caption: 'Silent symmetry inside the historic tea houses of Arashiyama. The relationship between raw cedar timber and natural rainfall creates an unmatched calming rhythm. 🎋⛩️ #architecture #travel #kyoto',
+        caption: 'Silent symmetry inside the historic tea houses of Arashiyama. The relationship between raw cedar timber and natural rainfall creates an unmatched calming rhythm. #architecture #travel #kyoto',
         images: [
           { url: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1080&auto=format&fit=crop&q=80' },
           { url: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=1080&auto=format&fit=crop&q=80' }
@@ -311,7 +311,7 @@ const seedRichData = async () => {
       },
       {
         author: users[4]._id,
-        caption: 'Warm afternoon light casting sharp architectural shadows on raw ceramic vessels. The beauty of restrained styling and raw tactile materials. 🏺🕯️ #design #architecture #ceramics',
+        caption: 'Warm afternoon light casting sharp architectural shadows on raw ceramic vessels. The beauty of restrained styling and raw tactile materials. #design #architecture #ceramics',
         images: [
           { url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1080&auto=format&fit=crop&q=80' }
         ],
@@ -320,7 +320,7 @@ const seedRichData = async () => {
       },
       {
         author: users[5]._id,
-        caption: 'Analog oscillators warming up for the evening ambient session. Filtering square waves through tape saturation adds such an organic heartbeat to electronic sound. 🎹🔊 #music #creative #sounddesign',
+        caption: 'Analog oscillators warming up for the evening ambient session. Filtering square waves through tape saturation adds such an organic heartbeat to electronic sound. #music #creative #sounddesign',
         images: [
           { url: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1080&auto=format&fit=crop&q=80' }
         ],
@@ -329,7 +329,7 @@ const seedRichData = async () => {
       },
       {
         author: users[6]._id,
-        caption: 'Morning mist in the greenhouse! The new Philodendron billietiae leaf unfurled with incredible orange petioles. Nature’s gradient game is undefeated. 🌿✨ #photography #wellness #urbanjungle',
+        caption: 'Morning mist in the greenhouse! The new Philodendron billietiae leaf unfurled with incredible orange petioles. Nature’s gradient game is undefeated. #photography #wellness #urbanjungle',
         images: [
           { url: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1080&auto=format&fit=crop&q=80' }
         ],
@@ -338,7 +338,7 @@ const seedRichData = async () => {
       },
       {
         author: users[7]._id,
-        caption: 'Late night 35mm roll from the Gothic Quarter. The grain on CineStill 800T gives wet cobblestones and neon signs an unforgettable cinematic mood. 🎞️🌃 #photography #streetphotography #35mm',
+        caption: 'Late night 35mm roll from the Gothic Quarter. The grain on CineStill 800T gives wet cobblestones and neon signs an unforgettable cinematic mood. #photography #streetphotography #35mm',
         images: [
           { url: 'https://images.unsplash.com/photo-1509281373149-e957c6296406?w=1080&auto=format&fit=crop&q=80' }
         ],
@@ -347,7 +347,7 @@ const seedRichData = async () => {
       },
       {
         author: users[8]._id,
-        caption: 'CNC milled anodized aluminum prototype complete! Testing 65% gasket mount acoustics with hand-lubed linear switches. The tactile response is crisp. ⌨️⚙️ #design #creative #industrialdesign',
+        caption: 'CNC milled anodized aluminum prototype complete! Testing 65% gasket mount acoustics with hand-lubed linear switches. The tactile response is crisp. #design #creative #industrialdesign',
         images: [
           { url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1080&auto=format&fit=crop&q=80' }
         ],
@@ -356,7 +356,7 @@ const seedRichData = async () => {
       },
       {
         author: users[9]._id,
-        caption: 'Naturally leavened pain au chocolat with 27 flaky butter layers. Fresh out of the deck oven at 6:30 AM! The honeycomb crumb structure turned out sublime. 🥐☕️ #food #wellness #pastry',
+        caption: 'Naturally leavened pain au chocolat with 27 flaky butter layers. Fresh out of the deck oven at 6:30 AM! The honeycomb crumb structure turned out sublime. #food #wellness #pastry',
         images: [
           { url: 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=1080&auto=format&fit=crop&q=80' }
         ],
@@ -365,7 +365,7 @@ const seedRichData = async () => {
       },
       {
         author: users[10]._id,
-        caption: '24-mile ridge run above the cloud inversion line. Hard climbs, thin air, and miles of pure singletrack bliss. Grateful for body, mind, and wild trails. 🏔️🏃‍♂️ #travel #minimal #trailrunning',
+        caption: '24-mile ridge run above the cloud inversion line. Hard climbs, thin air, and miles of pure singletrack bliss. Grateful for body, mind, and wild trails. #travel #minimal #trailrunning',
         images: [
           { url: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1080&auto=format&fit=crop&q=80' }
         ],
@@ -374,7 +374,7 @@ const seedRichData = async () => {
       },
       {
         author: users[11]._id,
-        caption: 'Finished the cover illustration for "The Secret of the Northern Pine"! Blending gouache with liquid ink gives these mystical forest creatures their ethereal glow. 📖🎨 #design #minimal #illustration',
+        caption: 'Finished the cover illustration for "The Secret of the Northern Pine"! Blending gouache with liquid ink gives these mystical forest creatures their ethereal glow. #design #minimal #illustration',
         images: [
           { url: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1080&auto=format&fit=crop&q=80' }
         ],
@@ -383,7 +383,7 @@ const seedRichData = async () => {
       },
       {
         author: users[12]._id,
-        caption: 'Rain reflections and neon holograms in Gangnam at 2:00 AM. Shooting wide open on the 28mm Summilux turns city raindrops into pure bokeh jewels. 🌧️📸 #photography #streetphotography #seoul',
+        caption: 'Rain reflections and neon holograms in Gangnam at 2:00 AM. Shooting wide open on the 28mm Summilux turns city raindrops into pure bokeh jewels. #photography #streetphotography #seoul',
         images: [
           { url: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1080&auto=format&fit=crop&q=80' }
         ],
@@ -392,7 +392,7 @@ const seedRichData = async () => {
       },
       {
         author: users[13]._id,
-        caption: 'Sunrise meditation overlooking the misty jungle ravines of Ubud. Reminding myself today: peace is not the absence of chaos, but the calm center within it. 🧘‍♀️🌴 #travel #wellness #bali',
+        caption: 'Sunrise meditation overlooking the misty jungle ravines of Ubud. Reminding myself today: peace is not the absence of chaos, but the calm center within it. #travel #wellness #bali',
         images: [
           { url: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1080&auto=format&fit=crop&q=80' }
         ],
@@ -401,7 +401,7 @@ const seedRichData = async () => {
       },
       {
         author: users[14]._id,
-        caption: 'Tonight’s signature amuse-bouche: Charcoal-grilled wild octopus with fermented smoked paprika emulsion and pickled sea fennel. Pure coastal Portuguese heritage. 🐙🍷 #food #photography #gastronomy',
+        caption: 'Tonight’s signature amuse-bouche: Charcoal-grilled wild octopus with fermented smoked paprika emulsion and pickled sea fennel. Pure coastal Portuguese heritage. #food #photography #gastronomy',
         images: [
           { url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1080&auto=format&fit=crop&q=80' }
         ],
@@ -410,7 +410,7 @@ const seedRichData = async () => {
       },
       {
         author: users[0]._id,
-        caption: 'Editorial spread design for ISSUE 04 of KINETIC Mag. Playing with asymmetrical grid layouts and heavy monospace typography. 📐🖤 #design #architecture #typography',
+        caption: 'Editorial spread design for ISSUE 04 of KINETIC Mag. Playing with asymmetrical grid layouts and heavy monospace typography. #design #architecture #typography',
         images: [
           { url: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=1080&auto=format&fit=crop&q=80' }
         ],
@@ -419,7 +419,7 @@ const seedRichData = async () => {
       },
       {
         author: users[1]._id,
-        caption: 'Pristine emerald waters of Emerald Lake in Yoho National Park. The glacial rock flour creates this unbelievable natural color palette. 🛶🌲 #travel #photography #canadianrockies',
+        caption: 'Pristine emerald waters of Emerald Lake in Yoho National Park. The glacial rock flour creates this unbelievable natural color palette. #travel #photography #canadianrockies',
         images: [
           { url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1080&auto=format&fit=crop&q=80' }
         ],
@@ -428,7 +428,7 @@ const seedRichData = async () => {
       },
       {
         author: users[3]._id,
-        caption: 'Geometrical precision of raw concrete stairs bathed in filtered skylight. Simple architecture speaks the loudest when materials are left untouched. 🏛️📐 #architecture #photography #brutalism',
+        caption: 'Geometrical precision of raw concrete stairs bathed in filtered skylight. Simple architecture speaks the loudest when materials are left untouched. #architecture #photography #brutalism',
         images: [
           { url: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=1080&auto=format&fit=crop&q=80' }
         ],
