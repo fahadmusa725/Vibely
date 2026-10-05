@@ -21,7 +21,9 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const ensureAdmin = require('./scripts/ensureAdmin');
 
-connectDB().then(() => ensureAdmin());
+connectDB()
+  .then(() => ensureAdmin())
+  .catch(() => {});
 
 const app = express();
 

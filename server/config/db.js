@@ -1,16 +1,27 @@
 const mongoose = require('mongoose');
 
-const connectDB = async () => {
-  try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/vibely');
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
-  } catch (error) {
-    console.error(`MongoDB connection error: ${error.message}`);
+let cachedConnection = null;
 
-    if (process.env.NODE_ENV === 'production') {
-      process.exit(1);
-    }
+const connectDB = async () => {
+  if (cachedConnection && mongoose.connection.readyState === 1) {
+    return cachedConnection;
   }
+
+  if (!cachedConnection) {
+    cachedConnection = mongoose
+      .connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/vibely')
+      .then((conn) => {
+        console.log(`MongoDB Connected: ${conn.connection.host}`);
+        return conn;
+      })
+      .catch((error) => {
+        cachedConnection = null;
+        console.error(`MongoDB connection error: ${error.message}`);
+        throw error;
+      });
+  }
+
+  return cachedConnection;
 };
 
 module.exports = connectDB;
